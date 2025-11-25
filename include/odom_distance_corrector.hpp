@@ -94,7 +94,7 @@ public:
             double csx = hitX - d * cos(dir);
             double csy = hitY - d * sin(dir);
 
-            // Convert sensor→robot center
+            // Convert sensor->robot center
             double crx = csx - s.dx * cos(rthetaRad) + s.dy * sin(rthetaRad);
             double cry = csy - s.dx * sin(rthetaRad) - s.dy * cos(rthetaRad);
 

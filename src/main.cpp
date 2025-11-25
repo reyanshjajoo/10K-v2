@@ -1,5 +1,10 @@
 #include "main.h"
 
+#include "mcl_localizer.hpp"
+
+extern ez::Drive chassis;
+extern MCLLocalizer mcl;
+
 // init vars
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
@@ -11,55 +16,30 @@ ez::Drive chassis(
     450); // Wheel RPM = cartridge * (motor gear / wheel gear)
 
 // field 12x12 ft, 20 percent blend, 10 degree heading gate
-OdomDistanceCorrector odomCorrector(chassis, 144.0);
 
-void initialize_odom() {
+// 12x12 field (144"), 200 particles
+MCLLocalizer mcl(chassis, 144.0, 200);
+bool usingMCL = true;
 
-    odomCorrector.addSensor(
-        7,          // port
-        -4.0,       // dx (back 4")
-        4.0,        // dy (right 4")
-        M_PI / 2.0  // facing right
-    );
+void initialize_mcl() {
 
-    odomCorrector.addSensor(
-        8,          // port
-        -4.0,       // dx
-        4.0,        // dy
-        M_PI        // facing back
-    );
+    mcl.addSensor(7, -4.0, 4.0, M_PI/2); // right-facing
+    mcl.addSensor(8, -4.0, 4.0, M_PI);   // back-facing
 
-    pros::Task odomDebugTask([] {
+    mcl.initializeAroundOdom();
+    mcl.setDebug(true);
+
+    pros::Task mclTask([] {
         pros::lcd::initialize();
-
         while (true) {
-
-            auto pos = odomCorrector.computePosition();
-
-            auto pose = chassis.odom_pose_get();
-
-            if (!pos.has_value()) {
-                pros::lcd::set_text(0, "No valid sensor pose");
-            } else {
-                pros::lcd::set_text(
-                    0,
-                    "Corr x=" + std::to_string(pos->first) +
-                    " y=" + std::to_string(pos->second)
-                );
+            if (usingMCL){
+              mcl.update();
+              mcl.debugPrintBrain();
             }
-
-            pros::lcd::set_text(
-                1,
-                "Odom x=" + std::to_string(pose.x) +
-                " y=" + std::to_string(pose.y)
-            );
-
-            pros::delay(100);
+            pros::delay(20);
         }
     });
 }
-
-
 
 IntakeState intakeState = IntakeState::idle;
 bool drive_arcade = false;
@@ -213,7 +193,8 @@ void autonomous()
   chassis.pid_targets_reset();               // Resets PID targets to 0
   chassis.drive_imu_reset();                 // Reset gyro position to 0
   chassis.drive_sensor_reset();              // Reset drive sensors to 0
-  chassis.odom_xyt_set(0_in, 0_in, 0_deg);   // Set the current position, you can start at a specific position with this
+  // chassis.odom_xyt_set(0_in, 0_in, 0_deg);   // Set the current position, you can start at a specific position with this
+  chassis.odom_xyt_set(-48_in, -13_in, 90_deg);   // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency
 
   ez::as::auton_selector.selected_auton_call(); // Calls selected auton from autonomous selector
@@ -258,10 +239,11 @@ void initialize()
 
   // Initialize chassis and auton selector
   chassis.initialize();
+  chassis.odom_xyt_set(-48_in, -13_in, 90_deg); //TODO: set starting position for each auton
   ez::as::initialize();
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 
-  initialize_odom(); //TODO: enable this line to enable odom correction
+  initialize_mcl(); // TODO: only initialize in skills runs
 
   // Show initial drive mode on the controller screen
   master.set_text(0, 0, drive_arcade ? "Drive: Arcade" : "Drive: Tank");
