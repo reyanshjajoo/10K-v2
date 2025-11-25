@@ -14,6 +14,7 @@ enum class IntakeState {
     idle,
     midGoal,
     highGoal,
+    reverse,
     intake
 };
 

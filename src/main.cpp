@@ -10,6 +10,57 @@ ez::Drive chassis(
     3.25, // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     450); // Wheel RPM = cartridge * (motor gear / wheel gear)
 
+// field 12x12 ft, 20 percent blend, 10 degree heading gate
+OdomDistanceCorrector odomCorrector(chassis, 144.0);
+
+void initialize_odom() {
+
+    odomCorrector.addSensor(
+        7,          // port
+        -4.0,       // dx (back 4")
+        4.0,        // dy (right 4")
+        M_PI / 2.0  // facing right
+    );
+
+    odomCorrector.addSensor(
+        8,          // port
+        -4.0,       // dx
+        4.0,        // dy
+        M_PI        // facing back
+    );
+
+    pros::Task odomDebugTask([] {
+        pros::lcd::initialize();
+
+        while (true) {
+
+            auto pos = odomCorrector.computePosition();
+
+            auto pose = chassis.odom_pose_get();
+
+            if (!pos.has_value()) {
+                pros::lcd::set_text(0, "No valid sensor pose");
+            } else {
+                pros::lcd::set_text(
+                    0,
+                    "Corr x=" + std::to_string(pos->first) +
+                    " y=" + std::to_string(pos->second)
+                );
+            }
+
+            pros::lcd::set_text(
+                1,
+                "Odom x=" + std::to_string(pose.x) +
+                " y=" + std::to_string(pose.y)
+            );
+
+            pros::delay(100);
+        }
+    });
+}
+
+
+
 IntakeState intakeState = IntakeState::idle;
 bool drive_arcade = false;
 
@@ -32,7 +83,7 @@ void drive_mode_task()
 }
 
 /**
- * Simplifies printing tracker values to the brain screen
+ * Printing tracker values to the brain screen
  */
 void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int line)
 {
@@ -131,6 +182,11 @@ void shooter_task() {
         hood.brake();        // hood braked
         break;
 
+      case IntakeState::reverse:
+        intake.move(-127);   // intake backward
+        hood.move(-127);     // hood backward
+        break;
+
       case IntakeState::idle:
       default:
         intake.move(0);
@@ -205,6 +261,8 @@ void initialize()
   ez::as::initialize();
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 
+  initialize_odom(); //TODO: enable this line to enable odom correction
+
   // Show initial drive mode on the controller screen
   master.set_text(0, 0, drive_arcade ? "Drive: Arcade" : "Drive: Tank");
 }
@@ -234,6 +292,8 @@ void opcontrol()
     }
     else if (master.get_digital(DIGITAL_R1)) {
         intakeState = IntakeState::intake;
+    } else if (master.get_digital(DIGITAL_R2)) {
+        intakeState = IntakeState::reverse;
     }
     else {
         intakeState = IntakeState::idle;
