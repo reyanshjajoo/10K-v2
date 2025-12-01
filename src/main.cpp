@@ -3,7 +3,7 @@
 // init vars
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
-    {1, -2, -11},     // Left Chassis Ports (negative port will reverse it!)
+    {1, -2, -11}, // Left Chassis Ports (negative port will reverse it!)
     {9, -10, 20}, // Right Chassis Ports (negative port will reverse it!)
 
     21,   // IMU Port
@@ -11,7 +11,7 @@ ez::Drive chassis(
     450); // Wheel RPM = cartridge * (motor gear / wheel gear)
 
 // field 12x12 ft, 20 percent blend, 10 degree heading gate
-//OdomDistanceCorrector odomCorrector(chassis, 144.0);
+// OdomDistanceCorrector odomCorrector(chassis, 144.0);
 
 // void initialize_odom() {
 
@@ -59,8 +59,6 @@ ez::Drive chassis(
 //     });
 // }
 
-
-
 IntakeState intakeState = IntakeState::idle;
 bool drive_arcade = false;
 
@@ -68,14 +66,14 @@ void drive_mode_task()
 {
   while (true)
   {
-    if (master.get_digital_new_press(DIGITAL_Y))
+    if (master.get_digital_new_press(DIGITAL_A))
     {
       drive_arcade = !drive_arcade;
-      master.rumble(drive_arcade ? "." : "..");
+      // master.rumble(drive_arcade ? "." : "..");
 
       // Update controller screen when drive mode changes. Controller updates are slow,
       // so only update on changes (we're doing that here).
-      master.set_text(0, 0, drive_arcade ? "Drive: Arcade" : "Drive: Tank");
+      // master.print(0, 0, "%s", drive_arcade ? "Drive: Arcade" : "Drive: Tank");
     }
 
     pros::delay(ez::util::DELAY_TIME);
@@ -135,7 +133,7 @@ void ez_screen_task()
 
 /**
  * Gives you some extras to run in your opcontrol:
- * - run your autonomous routine in opcontrol by pressing DOWN and B
+ * - run your autonomous routine in opcontrol by pressing UP and X together
  *   - to prevent this from accidentally happening at a competition, this
  *     is only enabled when you're not connected to competition control.
  * - gives you a GUI to change your PID values live by pressing X
@@ -147,7 +145,7 @@ void ez_template_extras()
     if (master.get_digital_new_press(DIGITAL_X))
       chassis.pid_tuner_toggle();
 
-    if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN))
+    if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_UP))
     {
       pros::motor_brake_mode_e_t preference = chassis.drive_brake_get();
       autonomous();
@@ -162,36 +160,46 @@ void ez_template_extras()
   }
 }
 
-void shooter_task() {
-  while (true) {
+void shooter_task()
+{
+  while (true)
+  {
 
-    switch (intakeState) {
+    switch (intakeState)
+    {
 
-      case IntakeState::midGoal:
-        intake.move(127);    // intake forward
-        intake2.move(127);     // intake2 backward
-        break;
+    case IntakeState::midGoal:
+      intake.move(127); // intake forward
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
 
-      case IntakeState::highGoal:
-        intake.move(127);    // intake forward
-        intake2.move(127);      // intake2 forward
-        break;
+    case IntakeState::highGoal:
+      intake.move(127); // intake forward
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(false);
+      break;
 
-      case IntakeState::intake:
-        intake.move(127);    // intake forward
-        intake2.move(127);        // intake2 braked
-        break;
+    case IntakeState::intake:
+      intake.move(127); // intake forward
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(true);
 
-      case IntakeState::reverse:
-        intake.move(-127);   // intake backward
-        intake2.move(-127);     // intake2 backward
-        break;
+      break;
 
-      case IntakeState::idle:
-      default:
-        intake.move(0);
-        intake2.move(0);
-        break;
+    case IntakeState::reverse:
+      intake.move(-127); // intake backward
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(true);
+
+      break;
+
+    case IntakeState::idle:
+    default:
+      intake.move(0);
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(true);
+      break;
     }
 
     pros::delay(10);
@@ -218,7 +226,6 @@ void autonomous()
 
   ez::as::auton_selector.selected_auton_call(); // Calls selected auton from autonomous selector
 }
-
 
 void initialize()
 {
@@ -267,37 +274,78 @@ void initialize()
   master.set_text(0, 0, drive_arcade ? "Drive: Arcade" : "Drive: Tank");
 }
 
+bool toggleMid = false;
+bool toggleHigh = false;
+bool toggleIntake = false;
+bool toggleReverse = false;
+bool matchloadDown = false;
+bool hornDown = false;
+
+// TODO: Matchload -> Down, Horn -> B
+
 void opcontrol()
 {
-  //chassis.drive_brake_set(MOTOR_BRAKE_COAST);
-
   while (true)
   {
     ez_template_extras();
 
     if (drive_arcade)
-    {
       chassis.opcontrol_arcade_standard(ez::SPLIT);
-    } else
-    {
+    else
       chassis.opcontrol_tank();
+
+    bool l2Held = master.get_digital(DIGITAL_L2);
+
+    if (master.get_digital_new_press(DIGITAL_R2))
+    {
+      toggleMid = !toggleMid;
+      toggleHigh = toggleIntake = toggleReverse = false;
     }
 
+    if (master.get_digital_new_press(DIGITAL_R1))
+    {
+      toggleHigh = !toggleHigh;
+      toggleMid = toggleIntake = toggleReverse = false;
+    }
 
-    if (master.get_digital(DIGITAL_L1)) {
-        intakeState = IntakeState::midGoal;
+    if (master.get_digital_new_press(DIGITAL_L1))
+    {
+      toggleIntake = !toggleIntake;
+      toggleMid = toggleHigh = toggleReverse = false;
     }
-    else if (master.get_digital(DIGITAL_L2)) {
-        intakeState = IntakeState::highGoal;
+
+    if (l2Held)
+    {
+      toggleReverse = false;
+      toggleMid = toggleHigh = toggleIntake = false;
     }
-    else if (master.get_digital(DIGITAL_R1)) {
-        intakeState = IntakeState::intake;
-    } else if (master.get_digital(DIGITAL_R2)) {
-        intakeState = IntakeState::reverse;
+    else
+    {
+      toggleReverse = false;
     }
-    else {
-        intakeState = IntakeState::idle;
+
+    if (master.get_digital_new_press(DIGITAL_DOWN))
+    {
+      matchloadDown = !matchloadDown;
+      matchload.set_value(matchloadDown);
     }
+
+    if (master.get_digital_new_press(DIGITAL_B))
+    {
+      hornDown = !hornDown;
+      horn.set_value(hornDown);
+    }
+
+    if (toggleMid)
+      intakeState = IntakeState::midGoal;
+    else if (toggleHigh)
+      intakeState = IntakeState::highGoal;
+    else if (toggleIntake)
+      intakeState = IntakeState::intake;
+    else if (l2Held)
+      intakeState = IntakeState::reverse;
+    else
+      intakeState = IntakeState::idle;
 
     pros::delay(ez::util::DELAY_TIME);
   }
