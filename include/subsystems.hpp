@@ -7,8 +7,8 @@ extern Drive chassis;
 
 // Your motors, sensors, etc. should go here.  Below are examples
 
-inline pros::Motor intake(5);
-inline pros::Motor hood(6);
+inline pros::Motor intake(3);
+inline pros::Motor intake2(-8);
 
 enum class IntakeState {
     idle,
