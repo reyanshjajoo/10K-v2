@@ -83,7 +83,63 @@ void right_7ball(){
   chassis.pid_wait_quick();
   matchloadDown = true;
 }
+void awp() {
+  chassis.odom_xyt_set(-48_in, 16_in, 0_deg);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED-10, true);
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set({-60, 46}, fwd, TURN_SPEED);
+  
+  chassis.pid_wait_quick();
+  matchload.set_value(true);
+  intakeState = IntakeState::intake;
+  chassis.pid_drive_set(10_in, DRIVE_SPEED, true);
+  chassis.pid_wait_quick();
+  pros::delay(500);//mathcload delay
+  chassis.pid_drive_set(-30_in, DRIVE_SPEED, true);
+  matchload.set_value(false);
+  intakeState = IntakeState::highGoal;
+  pros::delay(1000);//score high goal
+  intakeState = IntakeState::idle;
+  chassis.pid_drive_set(12_in, DRIVE_SPEED, true);
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set({-24, 21}, fwd, TURN_SPEED);
+  intakeState = IntakeState::intake;
+  chassis.pid_odom_set({{-24, 21}, fwd, DRIVE_SPEED-10});//go to 3 ball
+  chassis.pid_wait_quick();
+  pros::delay(200);
+  chassis.pid_turn_set({-10, 8}, rev, TURN_SPEED);
+  chassis.pid_wait_quick();
+  chassis.pid_odom_set({{-10, 8}, rev, DRIVE_SPEED});//to mid goal
+  
+  /*
+  intakeState = IntakeState::midGoal;//score mid goal
+  pros::delay(1000);
+  */
+ chassis.pid_wait_quick();
+  chassis.pid_drive_set(18_in, DRIVE_SPEED, true);//back to -23,23
+  chassis.pid_wait_quick();
+  intakeState = IntakeState::intake;
+  chassis.pid_turn_set({-24, -24}, fwd, TURN_SPEED);//next 3 ball
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(48_in, DRIVE_SPEED, true);
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set({-48, -48}, fwd, TURN_SPEED);
+  chassis.pid_wait_quick();
+  chassis.pid_odom_set({{-48, -48}, fwd, DRIVE_SPEED});
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set({-48,-60}, fwd, TURN_SPEED);//TODO turn didn't work here 
+  chassis.pid_wait_quick();
+    matchload.set_value(true);
+  chassis.pid_drive_set(10_in, DRIVE_SPEED, true);
+  pros::delay(500);//matchload delay
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-30_in, DRIVE_SPEED, true);
+  intakeState = IntakeState::highGoal;
+  
 
+  
+
+}
 void left_7ball(){
   chassis.odom_xyt_set(48_in, -11_in, 270_deg);
   chassis.pid_turn_set({22, -20}, fwd, TURN_SPEED);
