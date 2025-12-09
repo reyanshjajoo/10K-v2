@@ -51,6 +51,7 @@
 
 extern ez::Drive chassis;
 extern OdomDistanceCorrector odomCorrector;
+extern bool matchloadDown;
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do

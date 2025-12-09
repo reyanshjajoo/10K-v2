@@ -247,8 +247,10 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-      {"Right 7 Ball", right_7ball},
       {"Left 7 Ball", left_7ball},
+      {"Right 7 Ball", right_7ball},
+      {"Skills", skills},
+      {"Skills with Matchload", skills_matchload},
       // {"Drive\n\nDrive forward and come back", drive_example},
       // {"Turn\n\nTurn 3 times.", turn_example},
       // {"Drive and Turn\n\nDrive forward, turn, come back", drive_and_turn},
@@ -278,7 +280,7 @@ void initialize()
 
 bool toggleMid = false;
 bool toggleHigh = false;
-bool toggleIntake = false;
+bool toggleIntake = true;
 bool toggleReverse = false;
 bool matchloadDown = false;
 bool hornDown = false;
