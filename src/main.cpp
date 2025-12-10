@@ -224,8 +224,8 @@ void autonomous()
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);   // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency
 
-  //ez::as::auton_selector.selected_auton_call(); // Calls selected auton from autonomous selector
-  awp();
+  ez::as::auton_selector.selected_auton_call(); // Calls selected auton from autonomous selector
+  //awp();
 }
 
 void initialize()
@@ -248,9 +248,9 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
+      {"AWP", awp},
       {"Left 7 Ball", left_7ball},
       {"Right 7 Ball", right_7ball},
-      {"AWP", awp},
       {"Skills", skills},
       {"Skills with Matchload", skills_matchload},
       // {"Drive\n\nDrive forward and come back", drive_example},
