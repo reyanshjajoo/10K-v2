@@ -250,10 +250,10 @@ void initialize()
   ez::as::auton_selector.autons_add({
       {"AWP", awp},
       {"Right 7 Ball Horn", right_horn},
+      {"Skills", skills},
       {"Left 7 Ball Horn", left_horn},
       {"Left 7 Ball", left_7ball},
       {"Right 7 Ball", right_7ball},
-      {"Skills", skills},
       {"Skills with Matchload", skills_matchload},
   });
 
