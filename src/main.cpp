@@ -248,11 +248,11 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-      {"Right 7 Ball Horn", right_horn},
       {"AWP", awp},
       {"Left 7 Ball", left_7ball},
       {"Right 7 Ball", right_7ball},
       {"Left 7 Ball Horn", left_horn},
+      {"Right 7 Ball Horn", right_horn},
       {"Skills", skills},
   });
 
@@ -274,10 +274,17 @@ bool toggleReverse = false;
 bool matchloadDown = false;
 bool hornDown = false;
 
-void controller_input_task()
+void opcontrol()
 {
   while (true)
   {
+    ez_template_extras();
+
+    if (drive_arcade)
+      chassis.opcontrol_arcade_standard(ez::SPLIT);
+    else
+      chassis.opcontrol_tank();
+
     bool l2Held = master.get_digital(DIGITAL_L2);
 
     if (master.get_digital_new_press(DIGITAL_R2))
@@ -332,20 +339,6 @@ void controller_input_task()
       intakeState = IntakeState::idle;
 
     pros::delay(ez::util::DELAY_TIME);
-  }
-}
-
-void opcontrol()
-{
-  pros::Task controllerInputTask(controller_input_task);
-  while (true)
-  {
-    ez_template_extras();
-
-    if (drive_arcade)
-      chassis.opcontrol_arcade_standard(ez::SPLIT);
-    else
-      chassis.opcontrol_tank();
 
     pros::delay(ez::util::DELAY_TIME);
   }
