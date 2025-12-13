@@ -248,13 +248,12 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-      {"AWP", awp},
       {"Right 7 Ball Horn", right_horn},
-      {"Skills", skills},
-      {"Left 7 Ball Horn", left_horn},
+      {"AWP", awp},
       {"Left 7 Ball", left_7ball},
       {"Right 7 Ball", right_7ball},
-      {"Skills with Matchload", skills_matchload},
+      {"Left 7 Ball Horn", left_horn},
+      {"Skills", skills},
   });
 
   // Initialize chassis and auton selector
