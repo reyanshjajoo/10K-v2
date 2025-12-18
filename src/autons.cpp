@@ -6,8 +6,8 @@
 /////
 
 // These are out of 127
-const int DRIVE_SPEED = 115;
-const int DRIVE_SPEED_AWP = 120;
+const int DRIVE_SPEED = 90;
+const int DRIVE_SPEED_AWP = 100;
 const int MATCHLOAD_SPEED = 50;
 const int TURN_SPEED = 95;
 const int SWING_SPEED = 110;
@@ -16,21 +16,17 @@ const int DRIVE_SPEED_SKILLS = 75;
 ///
 // Constants
 ///
+enum class ChassisProfile { Normal, MatchloadDown };
+
+static ChassisProfile currentProfile = ChassisProfile::Normal;
+
 void default_constants()
 {
-  // P, I, D, and Start I
-  chassis.pid_drive_constants_set(16.7, 0.0, 106.5);        // Fwd/rev constants, used for odom and non odom motions
-  chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
-  chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);    // Turn in place constants
-  chassis.pid_swing_constants_set(6.0, 0.0, 65.0);          // Swing constants
-  chassis.pid_odom_angular_constants_set(6.5, 0.0, 52.5);   // Angular control for odom motions
-  chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5); // Angular control for boomerang motions
-
   // Exit conditions
   chassis.pid_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_swing_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_drive_exit_condition_set(90_ms, 1_in, 250_ms, 3_in, 500_ms, 500_ms);
-  chassis.pid_odom_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 750_ms);
+  chassis.pid_odom_turn_exit_condition_set  (90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 750_ms);
   chassis.pid_odom_drive_exit_condition_set(90_ms, 1_in, 250_ms, 3_in, 500_ms, 750_ms);
   chassis.pid_turn_chain_constant_set(3_deg);
   chassis.pid_swing_chain_constant_set(5_deg);
@@ -50,6 +46,40 @@ void default_constants()
   chassis.odom_boomerang_dlead_set(0.625);    // This handles how aggressive the end of boomerang motions are
 
   chassis.pid_angle_behavior_set(ez::shortest); // Changes the default behavior for turning, this defaults it to the shortest path there
+}
+
+void matchload_constants() { 
+  chassis.pid_drive_constants_set(16.7, 0.0, 106.5);
+  chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
+  chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0); 
+}
+
+void apply_profile(ChassisProfile p) {
+  if (p == currentProfile) return;   // dont reapply 
+  switch (p) {
+    case ChassisProfile::Normal: 
+      // P, I, D, and Start I
+      chassis.pid_drive_constants_set(16.7, 0.0, 90);        // Fwd/rev constants, used for odom and non odom motions
+      chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
+      chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);    // Turn in place constants
+      chassis.pid_swing_constants_set(6.0, 0.0, 65.0);          // Swing constants
+      chassis.pid_odom_angular_constants_set(6.5, 0.0, 52.5);   // Angular control for odom motions
+      chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5); // Angular control for boomerang motions
+      break;
+
+    case ChassisProfile::MatchloadDown: //only need to change drive forward and turn
+        // P, I, D, and Start I
+      chassis.pid_drive_constants_set(16.7, 0.0, 106.5);        // Fwd/rev constants, used for odom and non odom motions
+      chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
+      chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);    // Turn in place constants
+      break;
+  }
+
+  currentProfile = p;
+}
+void setMatchload(bool value) { 
+  matchload.set_value(value); 
+  apply_profile(value ? ChassisProfile::MatchloadDown : ChassisProfile::Normal);
 }
 
 void left7()
@@ -152,7 +182,7 @@ void right_horn()
 }
 
 void awp()
-{
+{/*
   chassis.odom_xyt_set(-48_in, 16.5_in, 0_deg);
   chassis.pid_drive_set(29_in, DRIVE_SPEED_AWP - 10, true);
   matchload.set_value(true);
@@ -207,6 +237,39 @@ void awp()
   intakeState = IntakeState::highGoal;
   chassis.pid_wait_quick();
   chassis.pid_drive_set(-5_in, DRIVE_SPEED_AWP, true);
+*/
+
+  //tuning pid angular w/ turn set
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait_quick();
+  pros::delay(300);
+  //tuning pid angular w/ heading
+  /*
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.pid_turn_set(90_deg, fwd, TURN_SPEED);//turn right 90 deg
+  pros::delay(1000);  
+  chassis.pid_turn_set(180_deg, fwd, TURN_SPEED);
+  pros::delay(1000);
+  chassis.pid_turn_set(270_deg, fwd, TURN_SPEED);
+  pros::delay(1000);
+  chassis.pid_turn_set(0_deg, fwd, TURN_SPEED);//back to 0
+  */
+
+  //tuning pid linear 90 drive speed 
+  /*
+    chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.pid_drive_set(24_in, DRIVE_SPEED, true);//forward 24 in
+  */
+
+
+  //tuning pid linear 100 drive speed 
+  /*
+    chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_AWP, true);//forward 24 in
+
+  */
+
 }
 
 void skills()
