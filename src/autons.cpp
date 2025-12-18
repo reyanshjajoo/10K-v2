@@ -22,6 +22,13 @@ static ChassisProfile currentProfile = ChassisProfile::Normal;
 
 void default_constants()
 {
+  // PID constants  
+  chassis.pid_drive_constants_set(16.7, 0.0, 103);        // Fwd/rev constants, used for odom and non odom motions
+  chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
+  chassis.pid_turn_constants_set(3.73, 0.0, 35, 6);    // Turn in place constants
+  chassis.pid_swing_constants_set(6.0, 0.0, 65.0);          // Swing constants
+  chassis.pid_odom_angular_constants_set(6.5, 0.0, 52.5);   // Angular control for odom motions
+  chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5); // Angular control for boomerang motions
   // Exit conditions
   chassis.pid_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_swing_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
@@ -52,34 +59,6 @@ void matchload_constants() {
   chassis.pid_drive_constants_set(16.7, 0.0, 106.5);
   chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
   chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0); 
-}
-
-void apply_profile(ChassisProfile p) {
-  if (p == currentProfile) return;   // dont reapply 
-  switch (p) {
-    case ChassisProfile::Normal: 
-      // P, I, D, and Start I
-      chassis.pid_drive_constants_set(16.7, 0.0, 90);        // Fwd/rev constants, used for odom and non odom motions
-      chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
-      chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);    // Turn in place constants
-      chassis.pid_swing_constants_set(6.0, 0.0, 65.0);          // Swing constants
-      chassis.pid_odom_angular_constants_set(6.5, 0.0, 52.5);   // Angular control for odom motions
-      chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5); // Angular control for boomerang motions
-      break;
-
-    case ChassisProfile::MatchloadDown: //only need to change drive forward and turn
-        // P, I, D, and Start I
-      chassis.pid_drive_constants_set(16.7, 0.0, 106.5);        // Fwd/rev constants, used for odom and non odom motions
-      chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
-      chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);    // Turn in place constants
-      break;
-  }
-
-  currentProfile = p;
-}
-void setMatchload(bool value) { 
-  matchload.set_value(value); 
-  apply_profile(value ? ChassisProfile::MatchloadDown : ChassisProfile::Normal);
 }
 
 void left7()
@@ -241,7 +220,7 @@ void awp()
 
   //tuning pid angular w/ turn set
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
   chassis.pid_wait_quick();
   pros::delay(300);
   //tuning pid angular w/ heading
