@@ -249,9 +249,12 @@ void initialize()
 
   ez::as::auton_selector.autons_add({
       {"AWP", awp},
-      {"Left 7 Ball", left_7ball},
-      {"Right 7 Ball", right_7ball},
+      {"Left 7 Ball", left7},
+      {"Left 7 Ball Descore", left_7ball},
       {"Left 7 Ball Horn", left_horn},
+      {"Left 3-4 Split", left_3_4},
+      {"Right 7 Ball", right7},
+      {"Right 7 Ball Descore", right_7ball},
       {"Right 7 Ball Horn", right_horn},
       {"Skills", skills},
   });
