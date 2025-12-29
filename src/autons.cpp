@@ -256,10 +256,18 @@ void awp()
   intakeState = IntakeState::midGoal;
   pros::delay(500);//score mid goal
   chassis.pid_wait_quick();
-  chassis.pid_drive_set(54_in, DRIVE_SPEED, true);//cordinate 48,-47
+  //-------------------- distance reset 
+  chassis.pid_turn_set({55, -40}, fwd, TURN_SPEED); 
   chassis.pid_wait_quick(); 
-  chassis.pid_turn_set(90_deg, fwd, TURN_SPEED);
+  chassis.pid_turn_set(0_deg, fwd, TURN_SPEED); //line up to wall for reset
+  chassis.pid_wait_quick(); 
+  distance_reset();
   setMatchload(true);
+  chassis.pid_odom_set({{55, -47}, rev, DRIVE_SPEED}); //matchload at 48,-47
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set(90_deg, fwd, TURN_SPEED);
+  chassis.pid_wait_quick();
+    //--------------------
   chassis.pid_drive_set(14_in, MATCHLOAD_SPEED, true);//intake matchload  
   pros::delay(300); //matchlaod delay
   chassis.pid_drive_set(-35_in, DRIVE_SPEED, true);//back from matchload  
