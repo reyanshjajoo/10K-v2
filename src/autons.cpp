@@ -41,7 +41,6 @@ void default_constants()
   chassis.pid_angle_behavior_set(ez::shortest); // Changes the default behavior for turning, this defaults it to the shortest path there
 }
 
-
 void matchload_constants() { 
   chassis.pid_drive_constants_set(16.7, 0.0, 106.5);
   chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
@@ -78,6 +77,39 @@ void setMatchload(bool value) {
   matchload.set_value(value); 
   apply_profile(value ? ChassisProfile::MatchloadDown : ChassisProfile::Normal);
 }
+
+// ----------------------------------------------------------------
+
+pros::Distance dist_back(13);
+pros::Distance dist_right(14);
+
+constexpr double FIELD_SIZE_IN = 144.0;
+constexpr double FIELD_HALF_IN = FIELD_SIZE_IN/2;
+
+constexpr double BACK_SENSOR_OFFSET_IN = 7.0;
+constexpr double RIGHT_SENSOR_OFFSET_IN = 6.0;
+
+inline double mm_to_in(double mm){
+    return mm / 25.4;
+}
+
+void distance_reset(){
+    double d_back_mm = dist_back.get();
+    double d_right_mm = dist_right.get();
+
+    double d_back_in = mm_to_in(d_back_mm);
+    double d_right_in = mm_to_in(d_right_mm);
+
+    double y_sensor = -FIELD_HALF_IN + d_back_in;
+    double x_sensor = FIELD_HALF_IN - d_right_in;
+
+    double y_center = y_sensor + BACK_SENSOR_OFFSET_IN;
+    double x_center = x_sensor + RIGHT_SENSOR_OFFSET_IN;
+
+    chassis.odom_xy_set(x_center * 1_in, y_center * 1_in);
+}
+
+// -----------------------------------------------------------------------------------------------------
 
 void left7()
 {

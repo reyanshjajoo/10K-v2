@@ -47,10 +47,7 @@
 #include "autons.hpp"
 #include "subsystems.hpp"
 
-#include "odom_distance_corrector.hpp"
-
 extern ez::Drive chassis;
-extern OdomDistanceCorrector odomCorrector;
 extern bool matchloadDown;
 
 /**

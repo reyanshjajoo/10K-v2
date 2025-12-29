@@ -9,11 +9,6 @@ extern Drive chassis;
 
 inline pros::MotorGroup intake({3, -8});
 
-inline pros::Distance dNorth(12);
-inline pros::Distance dNorthW(13);
-inline pros::Distance dEast(14);
-inline pros::Distance dWest(15);
-
 inline pros::adi::DigitalOut midGoalPiston('F');
 inline pros::adi::DigitalOut blockerPiston('B');
 inline pros::adi::DigitalOut matchload('C');
