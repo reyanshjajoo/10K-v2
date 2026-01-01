@@ -216,8 +216,6 @@ void initialize()
   ez::as::initialize();
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 
-  // initialize_odom(); //TODO: enable this line to enable odom correction
-
   // Show initial drive mode on the controller screen
   master.set_text(0, 0, drive_arcade ? "Drive: Arcade" : "Drive: Tank");
 }

@@ -75,7 +75,7 @@ void apply_profile(ChassisProfile p) {
 }
 void setMatchload(bool value) { 
   matchload.set_value(value); 
-  apply_profile(value ? ChassisProfile::MatchloadDown : ChassisProfile::Normal);
+  // apply_profile(value ? ChassisProfile::MatchloadDown : ChassisProfile::Normal);
 }
 
 // ----------------------------------------------------------------
@@ -246,12 +246,14 @@ void right_horn()
 
 void awp()
 {
-  chassis.odom_xyt_set(48_in, 11_in, 270_deg);
+  chassis.odom_xyt_set(48_in, 11_in, 180_deg);
   chassis.pid_drive_set(7_in, DRIVE_SPEED, true);
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED, true);
   chassis.pid_wait_quick();
   chassis.pid_turn_set({48, 46}, fwd, TURN_SPEED);
   chassis.pid_wait_quick();
-  chassis.pid_drive_set(36_in, DRIVE_SPEED, true);//drive to 48,46 matchload 
+  chassis.pid_drive_set(27_in, DRIVE_SPEED, true);//drive to 48,46 matchload 
   chassis.pid_wait_quick();
   chassis.pid_turn_set(90_deg, fwd, TURN_SPEED);
   intakeState = IntakeState::intake;  
