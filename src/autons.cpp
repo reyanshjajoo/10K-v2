@@ -18,21 +18,29 @@ const int DRIVE_SPEED_SKILLS = 75;
 ///
 // Constants
 ///
-enum class ChassisProfile { Normal, MatchloadDown };
-
-static ChassisProfile currentProfile = ChassisProfile::Normal;
 
 void default_constants()
 {
+
+  //pid
+  chassis.pid_drive_constants_set(17.0, 0.0, 120.0);
+  //chassis.pid_drive_constants_forward_set(17.0, 0.0, 120.0);
+  //chassis.pid_drive_constants_backward_set(17.0, 0.0, 100.0);
+  chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
+  chassis.pid_turn_constants_set(2.5, 0.05, 20, 4.7);    // Turn in place constant
+  chassis.pid_swing_constants_set(6.0, 0.0, 50.0);          // Swing constants
+  chassis.pid_odom_angular_constants_set(2.83, 0.0, 25.8, 4.7);   // Angular control for odom motions
+  chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5); // TODO: TUNE THIS (idt we are using boomerang)Angular control for boomerang motions
   // Exit conditions
-  chassis.pid_turn_exit_condition_set(40_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
+  chassis.pid_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_swing_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_drive_exit_condition_set(90_ms, 1_in, 250_ms, 3_in, 500_ms, 500_ms);
-  chassis.pid_odom_turn_exit_condition_set (90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 750_ms);
+  chassis.pid_odom_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 750_ms);
   chassis.pid_odom_drive_exit_condition_set(90_ms, 1_in, 250_ms, 3_in, 500_ms, 750_ms);
   chassis.pid_turn_chain_constant_set(3_deg);
   chassis.pid_swing_chain_constant_set(5_deg);
   chassis.pid_drive_chain_constant_set(3_in);
+
 
   chassis.odom_look_ahead_set(7_in);          // This is how far ahead in the path the robot looks at
   chassis.odom_boomerang_distance_set(16_in); // This sets the maximum distance away from target that the carrot point can be
@@ -41,38 +49,6 @@ void default_constants()
   chassis.pid_angle_behavior_set(ez::shortest); // Changes the default behavior for turning, this defaults it to the shortest path there
 }
 
-void matchload_constants() { 
-  chassis.pid_drive_constants_set(16.7, 0.0, 106.5);
-  chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
-  chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0); 
-}
-
-void apply_profile(ChassisProfile p) {
-  if (p == currentProfile) return;   // dont reapply 
-  switch (p) {
-    case ChassisProfile::Normal: 
-      // P, I, D, and Start I
-      //chassis.pid_drive_constants_set(16.7, 0.0, 103);        // Fwd/rev constants, used for odom and non odom motions
-      chassis.pid_drive_constants_forward_set(17.0, 0.0, 120.0);
-      chassis.pid_drive_constants_backward_set(17.0, 0.0, 100.0);
-      chassis.pid_heading_constants_set(11.0, 0.0, 30.0);       // Holds the robot straight while going forward without odom
-      chassis.pid_turn_constants_set(2.83, 0.0, 25.8, 4.7);    // Turn in place constant
-      chassis.pid_swing_constants_set(6.0, 0.0, 50.0);          // Swing constants
-      chassis.pid_odom_angular_constants_set(2.83, 0.0, 25.8, 4.7);   // Angular control for odom motions
-      chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5); // TODO: TUNE THIS (idt we are using boomerang)Angular control for boomerang motions
-      break;
-
-    case ChassisProfile::MatchloadDown: //only need to change drive forward and turn
-        // P, I, D, and Start I
-      chassis.pid_drive_constants_forward_set(17.0, 0.0, 120.0);//TODO tune matchload
-      chassis.pid_drive_constants_backward_set(17.0, 0.0, 100.0);
-      chassis.pid_turn_constants_set(2.83, 0.0, 25.8, 4.7);  
-      chassis.pid_odom_angular_constants_set(2.83, 0.0, 25.8, 4.7); 
-      break;
-  }
-
-  currentProfile = p;
-}
 void setMatchload(bool value) { 
   matchload.set_value(value); 
   // apply_profile(value ? ChassisProfile::MatchloadDown : ChassisProfile::Normal);
@@ -86,8 +62,8 @@ pros::Distance dist_right(14);
 constexpr double FIELD_SIZE_IN = 144.0;
 constexpr double FIELD_HALF_IN = FIELD_SIZE_IN/2;
 
-constexpr double BACK_SENSOR_OFFSET_IN = 7.0;
-constexpr double RIGHT_SENSOR_OFFSET_IN = 6.0;
+constexpr double BACK_SENSOR_OFFSET_IN = 5.0;
+constexpr double RIGHT_SENSOR_OFFSET_IN = 5.667;
 
 inline double mm_to_in(double mm){
     return mm / 25.4;
@@ -246,34 +222,53 @@ void right_horn()
 
 void awp()
 {
-  chassis.odom_xyt_set(48_in, 11_in, 180_deg);
-  chassis.pid_drive_set(7_in, DRIVE_SPEED, true);
-  chassis.pid_wait_quick();
-  chassis.pid_drive_set(-15_in, DRIVE_SPEED, true);
-  chassis.pid_wait_quick();
-  chassis.pid_turn_set({48, 46}, fwd, TURN_SPEED);
-  chassis.pid_wait_quick();
-  chassis.pid_drive_set(27_in, DRIVE_SPEED, true);//drive to 48,46 matchload 
-  chassis.pid_wait_quick();
-  chassis.pid_turn_set(90_deg, fwd, TURN_SPEED);
+   chassis.odom_xyt_set(48_in, 11_in, 0_deg);
   intakeState = IntakeState::intake;  
+  chassis.pid_drive_set(30.5_in, DRIVE_SPEED+10, true);
   chassis.pid_wait_quick();
-  setMatchload(true);
-  chassis.pid_drive_set(14_in, MATCHLOAD_SPEED, true);//intake matchload  
-  pros::delay(300); //matchlaod delay
-  chassis.pid_drive_set(-35_in, DRIVE_SPEED, true);//back from matchload  
-  chassis.pid_wait_quick_chain();
-  intakeState = IntakeState::highGoal;
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED, true);//press against goal while scoring 
+  matchload.set_value(true); 
+  chassis.pid_turn_exit_condition_set(20_ms, 3_deg, 100_ms, 7_deg, 500_ms, 500_ms);
+  chassis.pid_turn_set(90_deg, TURN_SPEED+10);
   chassis.pid_wait_quick();
-  setMatchload(false);
-  pros::delay(1000);
-  chassis.pid_drive_set(15_in, DRIVE_SPEED, true);
+  chassis.pid_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
+  chassis.pid_drive_set(10.5_in, DRIVE_SPEED, true);//intake matchload 
   chassis.pid_wait_quick(); 
+  pros::delay(100); //matchlaod delay
+  chassis.pid_drive_set(-30_in, DRIVE_SPEED, true);//back from matchload  
+  pros::delay(600);
+  intakeState = IntakeState::highGoal;
+  chassis.pid_wait_quick();
+  pros::delay(400);
+  setMatchload(false);
+  chassis.odom_xyt_set(29_in, 48_in, 90_deg);
+  intakeState = IntakeState::intake;
+  chassis.pid_drive_set(6_in, DRIVE_SPEED, true);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_swing_set(ez::LEFT_SWING, 225_deg, SWING_SPEED, -20, ez::cw);
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(25_in, DRIVE_SPEED, true); 
+  chassis.pid_wait_until(19_in);
+  matchload.set_value(true);
+  pros::delay(200);
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_wait_quick();
+  matchload.set_value(false);
+  chassis.pid_drive_set(51_in, DRIVE_SPEED, true);
+  chassis.pid_wait_until(40_in);
+  matchload.set_value(true);//next 3 ball
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set(135, TURN_SPEED);//mid goal 
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED, true);
+  chassis.pid_wait_quick();
+  intakeState = IntakeState::midGoal;
+  pros::delay(500);//score mid goal
+  intakeState = IntakeState::intake;
+  /*
   chassis.pid_turn_set({24, 24}, fwd, TURN_SPEED);
   chassis.pid_wait_quick(); 
   intakeState = IntakeState::intake;
-  //chassis.pid_odom_set({{24, 24}, fwd, DRIVE_SPEED_AWP});//go to 3 ball 
+  chassis.pid_odom_set({{24, 24}, fwd, DRIVE_SPEED_AWP});//go to 3 ball 
   chassis.pid_drive_set(29_in, DRIVE_SPEED, true);//3 ball faster
   pros::delay(500);
   setMatchload(true); 
@@ -295,13 +290,13 @@ void awp()
   //-------------------- distance reset 
   chassis.pid_turn_set({55, -40}, fwd, TURN_SPEED); 
   chassis.pid_wait_quick(); 
-  chassis.pid_turn_set(0_deg, fwd, TURN_SPEED); //line up to wall for reset
+  chassis.pid_turn_set(0_deg, TURN_SPEED); //line up to wall for reset
   chassis.pid_wait_quick(); 
   distance_reset();
   setMatchload(true);
   chassis.pid_odom_set({{55, -47}, rev, DRIVE_SPEED}); //matchload at 48,-47
   chassis.pid_wait_quick();
-  chassis.pid_turn_set(90_deg, fwd, TURN_SPEED);
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait_quick();
     //--------------------
   chassis.pid_drive_set(14_in, MATCHLOAD_SPEED, true);//intake matchload  
@@ -311,7 +306,7 @@ void awp()
   intakeState = IntakeState::highGoal;
   chassis.pid_drive_set(-10_in, DRIVE_SPEED, true);//press against goal while scoring 
   chassis.pid_wait_quick();
-
+  */
 }
 
 void skills()

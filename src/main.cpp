@@ -214,8 +214,15 @@ void initialize()
   // Initialize chassis and auton selector
   chassis.initialize();
   ez::as::initialize();
+  pros::lcd::initialize();
+  // pros::Task screenTask([&](){
+  //       while (true) {
+  //           pros::lcd::print(4, "X: %f", chassis.odom_x_get()); // x
+  //           pros::lcd::print(5, "Y: %f", chassis.odom_y_get()); // y
+  //           pros::lcd::print(6, "Theta: %f", chassis.odom_theta_get()); // heading
+  //           }
+  // });
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
-
   // Show initial drive mode on the controller screen
   master.set_text(0, 0, drive_arcade ? "Drive: Arcade" : "Drive: Tank");
 }
