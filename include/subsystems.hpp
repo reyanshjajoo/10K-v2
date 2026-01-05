@@ -17,6 +17,7 @@ inline pros::adi::DigitalOut horn('A');
 enum class IntakeState {
     idle,
     midGoal,
+    midGoalAuto,
     highGoal,
     reverse,
     intake

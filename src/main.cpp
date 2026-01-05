@@ -12,7 +12,7 @@ ez::Drive chassis(
 
 
 IntakeState intakeState = IntakeState::idle;
-bool drive_arcade = true;
+bool drive_arcade = false;
 
 void drive_mode_task()
 {
@@ -145,7 +145,11 @@ void shooter_task()
       blockerPiston.set_value(true);
 
       break;
-
+    case IntakeState::midGoalAuto:
+      intake.move(80); // intake forward
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
     case IntakeState::idle:
     default:
       intake.move(0);
@@ -236,6 +240,7 @@ bool hornDown = false;
 
 void opcontrol()
 {
+  chassis.drive_brake_set(MOTOR_BRAKE_COAST);
   while (true)
   {
     ez_template_extras();
