@@ -121,7 +121,7 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(80); // intake forward
+      intake.move(127); // intake forward //TODO FOR SKILLS 80
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
