@@ -146,7 +146,7 @@ void shooter_task()
 
       break;
     case IntakeState::midGoalAuto:
-      intake.move(80); // intake forward
+      intake.move(75); // intake forward
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -204,15 +204,17 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-      {"AWP", awp},
-      {"Left 7 Ball", left7},
-      {"Left 7 Ball Descore", left_7ball},
-      {"Left 7 Ball Horn", left_horn},
-      {"Left 3-4 Split", left_3_4},
-      {"Right 7 Ball", right7},
-      {"Right 7 Ball Descore", right_7ball},
-      {"Right 7 Ball Horn", right_horn},
       {"Skills", skills},
+      {"AWP", awp},
+      {"Right 7 Ball Descore", right_7ball},
+
+       {"Left 7 Ball", left7},
+       {"Left 7 Ball Descore", left_7ball},
+        {"Left 7 Ball Horn", left_horn},
+       {"Left 3-4 Split", left_3_4},
+       {"Right 7 Ball", right7},
+       {"Right 7 Ball Horn", right_horn}
+
   });
 
   // Initialize chassis and auton selector
