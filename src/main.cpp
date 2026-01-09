@@ -10,7 +10,6 @@ ez::Drive chassis(
     3.25, // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     450); // Wheel RPM = cartridge * (motor gear / wheel gear)
 
-
 IntakeState intakeState = IntakeState::idle;
 bool drive_arcade = false;
 
@@ -121,11 +120,10 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(70); // intake forward //TODO FOR SKILLS 80
+      intake.move(100); // intake forward //TODO FOR SKILLS 100
       midGoalPiston.set_value(true);
-      blockerPiston.set_value(false);
+      blockerPiston.set_value(true);
       break;
-
 
     case IntakeState::highGoal:
       intake.move(127); // intake forward
@@ -147,15 +145,15 @@ void shooter_task()
 
       break;
     case IntakeState::midGoalAuto:
-      intake.move(75); // intake forward
+      intake.move(110); // intake forward
       midGoalPiston.set_value(true);
-      blockerPiston.set_value(false);
+      blockerPiston.set_value(true);
       break;
     case IntakeState::idle:
     default:
       intake.move(0);
-      // midGoalPiston.set_value(false);
-      // blockerPiston.set_value(true);
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(true);
       break;
     }
 
@@ -182,7 +180,6 @@ void autonomous()
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency
 
   ez::as::auton_selector.selected_auton_call(); // Calls selected auton from autonomous selector
-  //awp();
 }
 
 void initialize()
@@ -205,17 +202,15 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-      {"Skills", skills},
       {"AWP", awp},
+      {"Left 7 Ball", left7},
+      {"Left 7 Ball Descore", left_7ball},
+      {"Left 7 Ball Horn", left_horn},
+      {"Left 3-4 Split", left_3_4},
+      {"Right 7 Ball", right7},
       {"Right 7 Ball Descore", right_7ball},
-
-       {"Left 7 Ball", left7},
-       {"Left 7 Ball Descore", left_7ball},
-        {"Left 7 Ball Horn", left_horn},
-       {"Left 3-4 Split", left_3_4},
-       {"Right 7 Ball", right7},
-       {"Right 7 Ball Horn", right_horn}
-
+      {"Right 7 Ball Horn", right_horn},
+      {"Skills", skills},
   });
 
   // Initialize chassis and auton selector
@@ -257,8 +252,6 @@ void opcontrol()
 
     if (master.get_digital_new_press(DIGITAL_R2))
     {
-      midGoalPiston.set_value(false);
-      pros::delay(200);
       toggleMid = !toggleMid;
       toggleHigh = toggleIntake = toggleReverse = false;
     }
