@@ -280,7 +280,7 @@ void awp()
   intakeState = IntakeState::idle;
   matchload.set_value(false);
   
-  chassis.pid_drive_set(54.5_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(53.5_in, DRIVE_SPEED, true);
   matchload.set_value(true);
   chassis.pid_wait_quick();
   chassis.pid_turn_exit_condition_set(20_ms, 3_deg, 100_ms, 7_deg, 500_ms, 500_ms);
@@ -360,7 +360,7 @@ void skills()
   chassis.pid_wait_quick();
   chassis.pid_drive_set(-80_in, DRIVE_SPEED);
   chassis.pid_wait();
-  chassis.pid_swing_set(ez::RIGHT_SWING, -270_deg, SWING_SPEED, -29, ez::cw);
+  chassis.pid_swing_set(ez::RIGHT_SWING, -270_deg, SWING_SPEED, -29, ez::cw);//tune this swing 
   chassis.pid_wait_quick();
   chassis.pid_wait(); 
   chassis.pid_drive_set(-24_in, 127);
@@ -369,9 +369,7 @@ void skills()
   pros::delay(1000);
 
   // p2
-  chassis.odom_xyt_set(-29_in, 48_in, 270_deg);
-  chassis.pid_turn_set(272_deg, TURN_SPEED);  
-  pros::delay(400);
+  chassis.odom_xyt_set(29_in, 48_in, 90_deg); 
   intakeState = IntakeState::intake;
   matchload.set_value(true);
   chassis.pid_drive_set(33_in, DRIVE_SPEED);
@@ -383,12 +381,36 @@ void skills()
   intakeState = IntakeState::highGoal;
   pros::delay(1500);
   intakeState = IntakeState::intake;
-  chassis.odom_xyt_set(-29_in, 48_in, 270_deg);
+  chassis.odom_xyt_set(29_in, 48_in, 90_deg);//done 2nd quad 
   intakeState = IntakeState::intake;
-  chassis.pid_swing_set(ez::LEFT_SWING, 0_deg, SWING_SPEED, 67, ez::cw);//position clear zone 
+  chassis.pid_drive_set(12_in, DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_turn_set(0_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_odom_set({{ 41, -47}, fwd, DRIVE_SPEED}, true);//go to quad 3 
+  chassis.pid_wait();
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+  matchload.set_value(true);
+  pros::delay(200);
+  chassis.pid_drive_set(12_in, MATCHLOAD_SPEED);  //60 x 
+  chassis.pid_wait();
+  pros::delay(700);//matchload delay 
+  chassis.pid_drive_set(-16_in, MATCHLOAD_SPEED); // back out
+  chassis.pid_wait();
+  intakeState = IntakeState::highGoal;
+  matchload.set_value(false);
+  pros::delay(1000);//scoring
+  intakeState = IntakeState::idle;    
+  chassis.pid_swing_set(ez::LEFT_SWING, -90_deg, SWING_SPEED, -29, ez::cw);//to alley swing 
+  chassis.pid_wait(); 
+  /*
+    chassis.pid_swing_set(ez::LEFT_SWING, 0_deg, SWING_SPEED, 67, ez::cw);//position clear zone 
   chassis.pid_drive_set(69_in, 127);
   chassis.pid_wait_quick();
   chassis.pid_swing_set(ez::LEFT_SWING, 40_deg, SWING_SPEED, 10, ez::cw);
   chassis.pid_wait_quick(); 
+  */
+
 
 }
