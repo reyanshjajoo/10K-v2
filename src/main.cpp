@@ -120,7 +120,7 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(100); // intake forward //TODO FOR SKILLS 100
+      intake.move(127); // intake forward //TODO FOR SKILLS 100
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -204,14 +204,10 @@ void initialize()
 
   ez::as::auton_selector.autons_add({
       {"AWP", awp},
-      {"Left 3-4 Split", left_3_4},
       {"Go Forward", go_forward},
-
-      {"Left 7 Ball", left7},
+      {"Left 3-4 Split", left_3_4},
       {"Left 7 Ball Descore", left_7ball},
       {"Left 7 Ball Horn", left_horn},
-
-      {"Right 7 Ball", right7},
       {"Right 7 Ball Descore", right_7ball},
       {"Right 7 Ball Horn", right_horn},
       {"Skills", skills},
@@ -238,7 +234,7 @@ bool toggleHigh = false;
 bool toggleIntake = true;
 bool toggleReverse = false;
 bool matchloadDown = false;
-bool hornDown = false;
+bool hornDown = true;
 
 void opcontrol()
 {
