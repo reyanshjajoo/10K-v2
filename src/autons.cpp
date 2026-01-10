@@ -178,7 +178,7 @@ void left_3_4()
   pros::delay(250);
   chassis.pid_turn_set(-50,TURN_SPEED, true);
   chassis.pid_wait_quick();
-  chassis.pid_drive_set(-15_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(-16_in, DRIVE_SPEED, true);
   pros::delay(700);
   intakeState = IntakeState::midGoal;           // score mid goal
   pros::delay(1100);
@@ -186,7 +186,7 @@ void left_3_4()
     matchload.set_value(false);
   chassis.pid_drive_set(40_in, DRIVE_SPEED, true);
   pros::delay(1200);
-  chassis.pid_turn_set(85_deg, TURN_SPEED);
+  chassis.pid_turn_set(80_deg, TURN_SPEED);
   pros::delay(500);
   horn.set_value(true);
   chassis.pid_drive_set(35_in, DRIVE_SPEED, true);
@@ -276,8 +276,8 @@ void awp()
   chassis.pid_wait_until(52_in);
   matchload.set_value(true);
   pros::delay(600);
-  chassis.pid_drive_set(-7_in, DRIVE_SPEED, true);
-  pros::delay(300);
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED, true);
+  pros::delay(400);
   chassis.pid_turn_set(135, TURN_SPEED); // mid goal
   pros::delay(400);
   chassis.pid_drive_set(-18.5_in, DRIVE_SPEED-10, true);
@@ -285,9 +285,10 @@ void awp()
   intakeState = IntakeState::midGoalAuto;
   pros::delay(750); // score mid goal
   intakeState = IntakeState::idle;
+  pros::delay(100);
   matchload.set_value(false);
   
-  chassis.pid_drive_set(51.5_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(52.5_in, DRIVE_SPEED, true);
   matchload.set_value(true);
   chassis.pid_wait_quick();
   chassis.pid_turn_exit_condition_set(20_ms, 3_deg, 100_ms, 7_deg, 500_ms, 500_ms);

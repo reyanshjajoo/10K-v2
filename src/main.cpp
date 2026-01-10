@@ -139,7 +139,7 @@ void shooter_task()
       break;
 
     case IntakeState::reverse:
-      intake.move(-127); // intake backward
+      intake.move(-65); // intake backward
       midGoalPiston.set_value(false);
       blockerPiston.set_value(true);
 
