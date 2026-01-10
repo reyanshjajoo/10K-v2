@@ -145,7 +145,7 @@ void shooter_task()
 
       break;
     case IntakeState::midGoalAuto:
-      intake.move(110); // intake forward
+      intake.move(127); // intake forward TODO 110 Skills
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -168,6 +168,7 @@ void disabled()
 
 void competition_initialize()
 {
+
   // . . .
 }
 
@@ -190,7 +191,7 @@ void initialize()
   pros::Task shooterTask(shooter_task);
 
   pros::delay(500);
-
+  horn.set_value(true);
   chassis.opcontrol_curve_buttons_toggle(true);  // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(0.0);  // Sets the active brake kP. We recommend ~2.  0 will disable.
   chassis.opcontrol_curve_default_set(0.0, 0.0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
@@ -203,10 +204,13 @@ void initialize()
 
   ez::as::auton_selector.autons_add({
       {"AWP", awp},
+      {"Left 3-4 Split", left_3_4},
+      {"Go Forward", go_forward},
+
       {"Left 7 Ball", left7},
       {"Left 7 Ball Descore", left_7ball},
       {"Left 7 Ball Horn", left_horn},
-      {"Left 3-4 Split", left_3_4},
+
       {"Right 7 Ball", right7},
       {"Right 7 Ball Descore", right_7ball},
       {"Right 7 Ball Horn", right_horn},
