@@ -169,7 +169,7 @@ void left_3_4()
   pros::delay(1300);
  //chassis.odom_theta_set(270_deg);
   chassis.pid_swing_set(ez::RIGHT_SWING, 145_deg, SWING_SPEED, -60, ez::ccw);
-  pros::delay(1000 );
+  pros::delay(1000);
   intakeState = IntakeState::intake;
   chassis.pid_turn_set(180_deg, TURN_SPEED);
   chassis.pid_drive_set(15.5_in, DRIVE_SPEED, true);
@@ -201,7 +201,7 @@ void right7()
   //pros::delay(200);
   intakeState = IntakeState::intake;
   chassis.pid_odom_set({{22, 20}, fwd, DRIVE_SPEED});
-  chassis.pid_wait_until(18_in);
+  chassis.pid_wait_until(16_in);
   matchload.set_value(true);
   chassis.pid_wait_quick();
   chassis.pid_turn_set({54, 46}, fwd, TURN_SPEED);
@@ -210,7 +210,7 @@ void right7()
   chassis.pid_wait_quick();
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   pros::delay(400);
-  chassis.pid_drive_set(11_in, DRIVE_SPEED);
+  chassis.pid_drive_set(12_in, DRIVE_SPEED);
   pros::delay(1200);
   intakeState = IntakeState::idle;
   chassis.pid_drive_set(-33_in, DRIVE_SPEED);

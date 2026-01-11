@@ -203,9 +203,9 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-      {"Right 7 Ball Horn", right_horn},
+    {"Right 7 Ball Horn", right_horn},
+    {"Left 3-4 Split", left_3_4},
       {"AWP", awp},
-      {"Left 3-4 Split", left_3_4},
       {"Go Forward", go_forward},
       {"Left 7 Ball Descore", left_7ball},
       {"Left 7 Ball Horn", left_horn},
