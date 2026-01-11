@@ -205,7 +205,7 @@ void right7()
   matchload.set_value(true);
   chassis.pid_wait_quick();
   chassis.pid_turn_set({54, 46}, fwd, TURN_SPEED);
-  chassis.pid_wait_quick();
+  //chassis.pid_wait_quick();
   chassis.pid_odom_set({{54, 46}, fwd, DRIVE_SPEED});
   chassis.pid_wait_quick();
   chassis.pid_turn_set(90_deg, TURN_SPEED);
@@ -215,10 +215,12 @@ void right7()
   intakeState = IntakeState::idle;
   chassis.pid_drive_set(-33_in, DRIVE_SPEED);
   pros::delay(800);
-    matchload.set_value(false);
   chassis.pid_drive_set(-5_in, DRIVE_SPEED-30, true);
+  intakeState = IntakeState::reverse;
+  pros::delay(200);
+  matchload.set_value(false);
   intakeState = IntakeState::highGoal;
-  pros::delay(1700);
+  pros::delay(1500);
   chassis.pid_wait_quick();
 }
 
@@ -241,6 +243,7 @@ void right_horn()
   chassis.pid_wait_quick_chain();
   horn.set_value(true);
   chassis.pid_drive_set(33, DRIVE_SPEED , true);
+  chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);
   pros::delay(10000);
 }
 
