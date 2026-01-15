@@ -203,9 +203,9 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-      {"Left 3-4 Split", left_3_4},
-    {"Right 7 Ball Horn", right_horn},
       {"AWP", awp},
+      {"Left 3-4 Split", left_3_4},
+      {"Right 7 Ball Horn", right_horn},
       {"Go Forward", go_forward},
       {"Left 7 Ball Descore", left_7ball},
       {"Left 7 Ball Horn", left_horn},
@@ -283,7 +283,8 @@ void opcontrol()
       hornDown = !hornDown;
       horn.set_value(hornDown);
     }
-    if (master.get_digital_new_press(DIGITAL_A)){
+    if (master.get_digital_new_press(DIGITAL_A))
+    {
       matchloadDown = !matchloadDown;
       matchload.set_value(matchloadDown);
     }
