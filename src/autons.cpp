@@ -9,11 +9,9 @@
 
 // These are out of 127
 const int DRIVE_SPEED = 85;
-const int DRIVE_SPEED_AWP = 100;
 const int MATCHLOAD_SPEED = 50;
 const int TURN_SPEED = 80;
 const int SWING_SPEED = 110;
-const int DRIVE_SPEED_SKILLS = 75;
 
 ///
 // Constants
