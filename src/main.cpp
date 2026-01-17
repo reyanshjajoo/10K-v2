@@ -120,7 +120,7 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(100); // intake forward //TODO FOR SKILLS 100
+      intake.move(127); // intake forward //TODO FOR SKILLS 100
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -203,10 +203,10 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-    {"Skills", skills},
+    {"Right 7 Ball Horn", right_horn},
       {"AWP", awp},
+      {"Skills", skills},
       {"Left 3-4 Split", left_3_4},
-      {"Right 7 Ball Horn", right_horn},
       {"Go Forward", go_forward},
       {"Left 7 Ball Descore", left_7ball},
       {"Left 7 Ball Horn", left_horn},
