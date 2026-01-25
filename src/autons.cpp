@@ -150,7 +150,7 @@ void left_3_4()
   chassis.odom_xyt_set(-48_in, 11_in, 0_deg);
   intakeState = IntakeState::intake;
   matchload.set_value(true);
-  chassis.pid_drive_set(31.5_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(34.5_in, DRIVE_SPEED, true);
   pros::delay(1200);
   chassis.pid_turn_exit_condition_set(20_ms, 3_deg, 100_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
@@ -180,7 +180,7 @@ void left_3_4()
   pros::delay(350);
   chassis.pid_turn_set(-48,TURN_SPEED, true);
   chassis.pid_wait_quick();
-  chassis.pid_drive_set(-16.5_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(-19.5_in, DRIVE_SPEED, true);
   pros::delay(700);
   intakeState = IntakeState::midGoal;           // score mid goal
   pros::delay(1100);
