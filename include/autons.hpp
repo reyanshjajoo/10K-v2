@@ -1,6 +1,7 @@
 #pragma once
 
 void default_constants();
+void kaihan_counter();
 void awp();
 void go_forward();
 void drive_example();
