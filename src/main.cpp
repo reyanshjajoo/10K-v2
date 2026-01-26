@@ -191,7 +191,7 @@ void initialize()
   pros::Task shooterTask(shooter_task);
 
   pros::delay(500);
-  horn.set_value(true);
+  horn.set_value(false);
   chassis.opcontrol_curve_buttons_toggle(true);  // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(0.0);  // Sets the active brake kP. We recommend ~2.  0 will disable.
   chassis.opcontrol_curve_default_set(0.0, 0.0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
@@ -203,18 +203,15 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-        {"AWP", awp},
-    {"Left 3-4 Split", left_3_4},
-
-
-    {"Kaihan Counter", kaihan_counter},
+      {"AWP", awp},
+      {"Left 3-4 Split", left_3_4},
+      {"Kaihan Counter", kaihan_counter},
       {"Right 7 Ball Horn", right_horn},
-
-      {"Skills", skills},
       {"Go Forward", go_forward},
       {"Left 7 Ball Descore", left_7ball},
       {"Left 7 Ball Horn", left_horn},
       {"Right 7 Ball Descore", right_7ball},
+      {"Skills", skills},
   });
 
   // Initialize chassis and auton selector
@@ -242,10 +239,10 @@ bool hornDown = true;
 
 void opcontrol()
 {
-  chassis.drive_brake_set(MOTOR_BRAKE_COAST);
   while (true)
   {
     ez_template_extras();
+    chassis.drive_brake_set(MOTOR_BRAKE_COAST);
 
     if (drive_arcade)
       chassis.opcontrol_arcade_standard(ez::SPLIT);
@@ -266,10 +263,14 @@ void opcontrol()
       toggleMid = toggleIntake = toggleReverse = false;
     }
 
-    if (master.get_digital_new_press(DIGITAL_L1)){
-      if (toggleMid || toggleHigh || toggleReverse) {
+    if (master.get_digital_new_press(DIGITAL_L1))
+    {
+      if (toggleMid || toggleHigh || toggleReverse)
+      {
         toggleIntake = toggleMid = toggleHigh = toggleReverse = false;
-      } else {
+      }
+      else
+      {
         toggleIntake = !toggleIntake;
         toggleMid = toggleHigh = toggleReverse = false;
       }
@@ -306,8 +307,6 @@ void opcontrol()
       intakeState = IntakeState::reverse;
     else
       intakeState = IntakeState::idle;
-
-    pros::delay(ez::util::DELAY_TIME);
 
     pros::delay(ez::util::DELAY_TIME);
   }
