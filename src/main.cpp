@@ -120,7 +120,7 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(127); // intake forward //TODO FOR SKILLS 100
+      intake.move(100); // intake forward //TODO FOR SKILLS 100
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -191,7 +191,7 @@ void initialize()
   pros::Task shooterTask(shooter_task);
 
   pros::delay(500);
-  horn.set_value(false);
+  wing.set_value(false);
   chassis.opcontrol_curve_buttons_toggle(true);  // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(0.0);  // Sets the active brake kP. We recommend ~2.  0 will disable.
   chassis.opcontrol_curve_default_set(0.0, 0.0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
@@ -203,15 +203,16 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-      {"AWP", awp},
+    {"Skills", skills},
+    {"AWP", awp},
+      {"Right 7 Ball wing", right_wing},
       {"Left 3-4 Split", left_3_4},
       {"Kaihan Counter", kaihan_counter},
-      {"Right 7 Ball Horn", right_horn},
       {"Go Forward", go_forward},
       {"Left 7 Ball Descore", left_7ball},
-      {"Left 7 Ball Horn", left_horn},
+      {"Left 7 Ball wing", left_wing},
       {"Right 7 Ball Descore", right_7ball},
-      {"Skills", skills},
+
   });
 
   // Initialize chassis and auton selector
@@ -235,7 +236,7 @@ bool toggleHigh = false;
 bool toggleIntake = true;
 bool toggleReverse = false;
 bool matchloadDown = false;
-bool hornDown = true;
+bool wingDown = false;
 
 void opcontrol()
 {
@@ -251,13 +252,13 @@ void opcontrol()
 
     bool l2Held = master.get_digital(DIGITAL_L2);
 
-    if (master.get_digital_new_press(DIGITAL_R2))
+    if (master.get_digital_new_press(DIGITAL_B))
     {
       toggleMid = !toggleMid;
       toggleHigh = toggleIntake = toggleReverse = false;
     }
 
-    if (master.get_digital_new_press(DIGITAL_R1))
+    if (master.get_digital_new_press(DIGITAL_R2))
     {
       toggleHigh = !toggleHigh;
       toggleMid = toggleIntake = toggleReverse = false;
@@ -286,10 +287,10 @@ void opcontrol()
       toggleReverse = false;
     }
 
-    if (master.get_digital_new_press(DIGITAL_B))
+    if (master.get_digital_new_press(DIGITAL_R1))
     {
-      hornDown = !hornDown;
-      horn.set_value(hornDown);
+      wingDown = !wingDown;
+      wing.set_value(wingDown);
     }
     if (master.get_digital_new_press(DIGITAL_DOWN))
     {

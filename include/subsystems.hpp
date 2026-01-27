@@ -12,7 +12,7 @@ inline pros::MotorGroup intake({3, -8});
 inline pros::adi::DigitalOut midGoalPiston('F');
 inline pros::adi::DigitalOut blockerPiston('B');
 inline pros::adi::DigitalOut matchload('C');
-inline pros::adi::DigitalOut horn('A');
+inline pros::adi::DigitalOut wing('A');
 
 enum class IntakeState {
     idle,
