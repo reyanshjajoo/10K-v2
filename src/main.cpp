@@ -120,7 +120,7 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(100); // intake forward //TODO FOR SKILLS 100
+      intake.move(127); // intake forward //TODO FOR SKILLS 100
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -203,15 +203,15 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-    {"Skills", skills},
-    {"AWP", awp},
-      {"Right 7 Ball wing", right_wing},
+      {"AWP", awp},
+      {"Right 7 Ball Wing", right_wing},
       {"Left 3-4 Split", left_3_4},
       {"Kaihan Counter", kaihan_counter},
       {"Go Forward", go_forward},
       {"Left 7 Ball Descore", left_7ball},
-      {"Left 7 Ball wing", left_wing},
+      {"Left 7 Ball Wing", left_wing},
       {"Right 7 Ball Descore", right_7ball},
+      {"Skills", skills},
 
   });
 
@@ -236,7 +236,8 @@ bool toggleHigh = false;
 bool toggleIntake = true;
 bool toggleReverse = false;
 bool matchloadDown = false;
-bool wingDown = false;
+bool wingControlEnabled = false;
+bool wingForceUp = false;
 
 void opcontrol()
 {
@@ -254,7 +255,11 @@ void opcontrol()
 
     if (master.get_digital_new_press(DIGITAL_B))
     {
+      wingControlEnabled = true;
       toggleMid = !toggleMid;
+
+      wingForceUp = toggleMid;
+
       toggleHigh = toggleIntake = toggleReverse = false;
     }
 
@@ -287,11 +292,8 @@ void opcontrol()
       toggleReverse = false;
     }
 
-    if (master.get_digital_new_press(DIGITAL_R1))
-    {
-      wingDown = !wingDown;
-      wing.set_value(wingDown);
-    }
+    if (!wingControlEnabled && master.get_digital(DIGITAL_R1))
+      wingControlEnabled = true;
     if (master.get_digital_new_press(DIGITAL_DOWN))
     {
       matchloadDown = !matchloadDown;
@@ -308,6 +310,15 @@ void opcontrol()
       intakeState = IntakeState::reverse;
     else
       intakeState = IntakeState::idle;
+    
+    if (!toggleMid) wingForceUp = false;
+
+    if (wingControlEnabled){
+      if (wingForceUp)
+        wing.set_value(true);
+      else
+        wing.set_value(!master.get_digital(DIGITAL_R1));
+    }
 
     pros::delay(ez::util::DELAY_TIME);
   }

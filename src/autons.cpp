@@ -278,30 +278,29 @@ void left_3_4()
 void right7()
 {
   chassis.odom_xyt_set(48_in, 11_in, 270_deg);
-  chassis.pid_turn_set({22, 20}, fwd, TURN_SPEED);
-  //pros::delay(200);
+  chassis.pid_turn_set({20, 24}, fwd, TURN_SPEED);
+  //pros::delay(400);
+  chassis.pid_wait();
   intakeState = IntakeState::intake;
-  chassis.pid_odom_set({{22, 20}, fwd, DRIVE_SPEED});
+  chassis.pid_odom_ptp_set({{20, 24}, fwd, DRIVE_SPEED});
   chassis.pid_wait_until(16_in);
   matchload.set_value(true);
   chassis.pid_wait_quick();
-  chassis.pid_turn_set({54, 46}, fwd, TURN_SPEED);
+  chassis.pid_turn_set({50, 45}, fwd, TURN_SPEED);
   //chassis.pid_wait_quick();
-  chassis.pid_odom_set({{54, 46}, fwd, DRIVE_SPEED});
+  chassis.pid_odom_set({{50, 45}, fwd, DRIVE_SPEED});
   chassis.pid_wait_quick();
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   pros::delay(400);
   chassis.pid_drive_set(12_in, DRIVE_SPEED);
-  pros::delay(1200);
+  pros::delay(900);
   intakeState = IntakeState::idle;
   chassis.pid_drive_set(-33_in, DRIVE_SPEED);
   pros::delay(800);
-  chassis.pid_drive_set(-5_in, DRIVE_SPEED-30, true);
-  intakeState = IntakeState::reverse;
-  pros::delay(200);
+  chassis.drive_set(-127, -127);
   matchload.set_value(false);
   intakeState = IntakeState::highGoal;
-  pros::delay(1500);
+  pros::delay(1700);
   chassis.pid_wait_quick();
   intakeState = IntakeState::intake;
 }
@@ -319,16 +318,16 @@ void right_wing()
   right7();
   chassis.odom_theta_set(0_deg);
   setMatchload(false);
-  chassis.pid_drive_set(5_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(2_in, DRIVE_SPEED, true);
   chassis.pid_wait_quick_chain();
-  chassis.pid_swing_set(ez::RIGHT_SWING, 180_deg, SWING_SPEED, 5, ez::ccw);
+  chassis.pid_swing_set(ez::RIGHT_SWING, 180_deg, SWING_SPEED+40, 0, ez::ccw);
   chassis.pid_wait_quick_chain();
   wing.set_value(false);
-  chassis.pid_drive_set(33, DRIVE_SPEED , true);
+  chassis.pid_drive_set(26_in, DRIVE_SPEED-30, true);
   chassis.pid_wait_quick();
-  chassis.pid_drive_set(3_in,40);
+  chassis.pid_turn_set(225_deg, TURN_SPEED);
+  pros::delay(500);
   chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);
-  pros::delay(10000);
 }
 
 void awp()
