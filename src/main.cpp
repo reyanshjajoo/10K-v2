@@ -208,8 +208,6 @@ void initialize()
       {"Left 3-4 Split", left_3_4},
       {"Kaihan Counter", kaihan_counter},
       {"Go Forward", go_forward},
-      {"Left 7 Ball Descore", left_7ball},
-      {"Left 7 Ball Wing", left_wing},
       {"Right 7 Ball Descore", right_7ball},
       {"Skills", skills},
 

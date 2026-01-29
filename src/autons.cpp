@@ -88,56 +88,6 @@ void distance_reset()
 
 // -----------------------------------------------------------------------------------------------------
 
-void left7()
-{
-  chassis.odom_xyt_set(48_in, -11_in, 270_deg);
-  chassis.pid_turn_set({22, -20}, fwd, TURN_SPEED);
-  pros::delay(200);
-  intakeState = IntakeState::intake;
-  chassis.pid_odom_set({{22, -20}, fwd, DRIVE_SPEED - 30});
-  chassis.pid_wait_until(20_in);
-  matchload.set_value(true);
-  chassis.pid_wait_quick();
-  chassis.pid_turn_set({54, -47}, fwd, TURN_SPEED);
-  chassis.pid_wait_quick();
-  chassis.pid_odom_set({{54, -47}, fwd, DRIVE_SPEED});
-  chassis.pid_wait_quick();
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
-  chassis.pid_wait_quick();
-  chassis.pid_drive_set(12_in, MATCHLOAD_SPEED, true);
-  chassis.pid_wait_quick();
-  pros::delay(200);
-  chassis.pid_drive_set(-32_in, DRIVE_SPEED, true);
-  matchload.set_value(false);
-  chassis.pid_wait();
-  chassis.pid_drive_set(-5_in, DRIVE_SPEED-30, true);
-  intakeState = IntakeState::highGoal;
-  pros::delay(1700);
-  chassis.pid_wait_quick();
-}
-
-void left_7ball()
-{
-  left7();
-  chassis.pid_drive_set(5_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED + 20, true);
-  chassis.pid_wait();
-  matchloadDown = true;
-}
-
-void left_wing()
-{
-  left7();
-  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
-  chassis.pid_drive_set(7_in, DRIVE_SPEED + 20, true);
-  chassis.pid_wait_quick();
-  chassis.pid_swing_set(ez::RIGHT_SWING, 180_deg, SWING_SPEED, 5, ez::ccw);
-  chassis.pid_wait_quick();
-  wing.set_value(false);
-  chassis.pid_drive_set(33, DRIVE_SPEED + 20, true);
-}
-
 void go_forward(){
   wing.set_value(false);
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);
@@ -147,70 +97,8 @@ void go_forward(){
 void kaihan_counter()
 {
 
-  chassis.odom_xyt_set(-48_in, 11_in, 0_deg);
-  intakeState = IntakeState::intake;
-  matchload.set_value(true);
-  chassis.pid_drive_set(34.5_in, DRIVE_SPEED, true);
-  pros::delay(1200);
-  chassis.pid_turn_exit_condition_set(20_ms, 3_deg, 100_ms, 7_deg, 500_ms, 500_ms);
-  chassis.pid_turn_set(-90_deg, TURN_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_exit_condition_set(80_ms, 3_deg, 200_ms, 7_deg, 400_ms, 500_ms);
-  chassis.pid_drive_set(14.5_in, 55); // intake matchload
-  chassis.pid_wait();
-  pros::delay(0);                             // matchlaod delay
-  chassis.pid_drive_set(-33_in, DRIVE_SPEED); // back from matchload
-  pros::delay(900);
-  intakeState = IntakeState::highGoal;
-  matchload.set_value(false);
-  pros::delay(400);
- //chassis.odom_theta_set(270_deg);
- intakeState = IntakeState::idle;
- pros::delay(100);
-  intakeState = IntakeState::reverse;
-  pros::delay(450);
-  intakeState = IntakeState::intake;
-  chassis.pid_swing_set(ez::RIGHT_SWING, 145_deg, SWING_SPEED, -60, ez::ccw);
-  pros::delay(1000);
-  chassis.pid_turn_set(180_deg, TURN_SPEED);
-  pros::delay(200);
-  chassis.pid_drive_set(14_in, DRIVE_SPEED, true);
-  pros::delay(300);
-  matchload.set_value(true);
-  pros::delay(350);
-  chassis.pid_turn_set(-48,TURN_SPEED, true);
-  chassis.pid_wait_quick();
-  chassis.pid_drive_set(-19.5_in, DRIVE_SPEED, true);
-  pros::delay(700);
-  intakeState = IntakeState::midGoal;           // score mid goal
-  pros::delay(1100);
-    chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);  
-  intakeState = IntakeState::idle;
-  pros::delay(2000);
-  chassis.drive_brake_set(pros::E_MOTOR_BRAKE_BRAKE);
-  intakeState = IntakeState::intake;
-    matchload.set_value(false);
-  chassis.pid_drive_set(4_in, DRIVE_SPEED);
-  pros::delay(200);
-  chassis.pid_drive_set(-6_in, DRIVE_SPEED);
-  pros::delay(400);
-  chassis.pid_drive_set(41_in, DRIVE_SPEED, true);
-  pros::delay(1200);
-  chassis.pid_turn_set(85_deg, TURN_SPEED);
-  pros::delay(500);
-  wing.set_value(false);
-  chassis.pid_drive_set(33_in, DRIVE_SPEED, true);
-  pros::delay(1000);
-  chassis.pid_turn_set(120_deg, TURN_SPEED);
-  chassis.pid_wait_quick();
-  chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);  
-}
-
-
-void left_3_4()
-{
-
-  chassis.odom_xyt_set(-48_in, 11_in, 0_deg);
+chassis.odom_xyt_set(-48_in, 11_in, 0_deg);
+  wing.set_value(true);
   intakeState = IntakeState::intake;
   matchload.set_value(true);
   chassis.pid_drive_set(34_in, DRIVE_SPEED, true);
@@ -225,9 +113,68 @@ void left_3_4()
   chassis.pid_drive_set(-33_in, DRIVE_SPEED); // back from matchload
     pros::delay(900);
   intakeState = IntakeState::highGoal;
+  matchload.set_value(false);
+  pros::delay(400);
+  intakeState = IntakeState::intake;
+  pros::delay(400);
+  chassis.pid_swing_set(ez::RIGHT_SWING, 145_deg, SWING_SPEED, -60, ez::ccw);
+  pros::delay(800);
+  chassis.pid_wait();
+  intakeState = IntakeState::intake; // later to outtake balls
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  pros::delay(200);
+  chassis.pid_drive_set(14.5_in, DRIVE_SPEED, true);
+  pros::delay(150);
+  matchload.set_value(true);
+  pros::delay(500);
+  chassis.pid_turn_set(-48,TURN_SPEED, true);
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-21.5_in, DRIVE_SPEED, true);
+  pros::delay(600);
+  intakeState = IntakeState::midGoal;           // score mid goal
+  pros::delay(2000);
+  intakeState = IntakeState::intake;
+  wing.set_value(false);
+  chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);
+  pros::delay(1000);
+  chassis.drive_brake_set(pros::E_MOTOR_BRAKE_BRAKE);
+  matchload.set_value(false);
+
+  chassis.pid_drive_set(4_in, DRIVE_SPEED);
+  pros::delay(200);
+  chassis.pid_drive_set(-6_in, DRIVE_SPEED);
+  pros::delay(400);
 
 
+  chassis.pid_drive_set(42_in, DRIVE_SPEED, true);
+  pros::delay(1200);
+  chassis.pid_turn_set(85_deg, TURN_SPEED);
+  pros::delay(500);
+  wing.set_value(false);
+  chassis.pid_drive_set(29_in, DRIVE_SPEED, true);
+  pros::delay(1000);
+}
 
+
+void left_3_4()
+{
+
+  chassis.odom_xyt_set(-48_in, 11_in, 0_deg);
+  wing.set_value(true);
+  intakeState = IntakeState::intake;
+  matchload.set_value(true);
+  chassis.pid_drive_set(34_in, DRIVE_SPEED, true);
+  pros::delay(1000);
+  chassis.pid_turn_exit_condition_set(20_ms, 3_deg, 100_ms, 7_deg, 500_ms, 500_ms);
+  chassis.pid_turn_set(-90_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_exit_condition_set(80_ms, 3_deg, 200_ms, 7_deg, 400_ms, 500_ms);
+  chassis.pid_drive_set(8.7_in, 55); // intake matchload
+  chassis.pid_wait();
+  pros::delay(140);                             // matchlaod delay
+  chassis.pid_drive_set(-33_in, DRIVE_SPEED); // back from matchload
+    pros::delay(900);
+  intakeState = IntakeState::highGoal;
   matchload.set_value(false);
   pros::delay(400);
  pros::delay(550);
