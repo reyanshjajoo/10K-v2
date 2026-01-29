@@ -203,7 +203,7 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
-    {"Right 6 Ball Rush", right_six_ball_rush},
+      {"Right 6 Ball Rush", right_six_ball_rush},
       {"AWP", awp},
       {"Right 7 Ball Wing", right_wing},
       {"Left 3-4 Split", left_3_4},
@@ -236,7 +236,6 @@ bool toggleIntake = true;
 bool toggleReverse = false;
 bool matchloadDown = false;
 bool wingControlEnabled = false;
-bool wingForceUp = false;
 
 void opcontrol()
 {
@@ -256,9 +255,6 @@ void opcontrol()
     {
       wingControlEnabled = true;
       toggleMid = !toggleMid;
-
-      wingForceUp = toggleMid;
-
       toggleHigh = toggleIntake = toggleReverse = false;
     }
 
@@ -293,6 +289,10 @@ void opcontrol()
 
     if (!wingControlEnabled && master.get_digital(DIGITAL_R1))
       wingControlEnabled = true;
+    if (wingControlEnabled)
+    {
+      wing.set_value(!master.get_digital(DIGITAL_R1));
+    }
     if (master.get_digital_new_press(DIGITAL_DOWN))
     {
       matchloadDown = !matchloadDown;
@@ -309,15 +309,6 @@ void opcontrol()
       intakeState = IntakeState::reverse;
     else
       intakeState = IntakeState::idle;
-    
-    if (!toggleMid) wingForceUp = false;
-
-    if (wingControlEnabled){
-      if (wingForceUp)
-        wing.set_value(true);
-      else
-        wing.set_value(!master.get_digital(DIGITAL_R1));
-    }
 
     pros::delay(ez::util::DELAY_TIME);
   }
