@@ -120,7 +120,7 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(127); // intake forward //TODO FOR SKILLS 100
+      intake.move(127); // intake forward //TODO FOR SKILLS 95
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -211,7 +211,6 @@ void initialize()
       {"Go Forward", go_forward},
       {"Right 7 Ball Push", right_7ball},
       {"Skills", skills},
-
   });
 
   // Initialize chassis and auton selector
