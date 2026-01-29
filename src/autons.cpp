@@ -277,6 +277,42 @@ void right_wing()
   chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);
 }
 
+void right_six_ball_rush()
+{
+  wing.set_value(true);
+  chassis.odom_xyt_set(48_in, 11_in, 270_deg);
+  chassis.pid_turn_set({20, 24}, fwd, TURN_SPEED);
+  //pros::delay(300);
+  intakeState = IntakeState::intake;
+  chassis.pid_odom_ptp_set({{20, 24}, fwd, DRIVE_SPEED-20});
+  chassis.pid_wait_until(16_in);
+  matchload.set_value(true);
+  pros::delay(300);
+  chassis.pid_turn_set({2, 47}, fwd, TURN_SPEED);
+  chassis.pid_drive_set(20_in, DRIVE_SPEED);
+  chassis.pid_wait_until(2_in);
+  matchload.set_value(false);
+  pros::delay(600);
+  chassis.pid_turn_set(265_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.drive_set(-127, -127);
+  pros::delay(1000);
+  intakeState = IntakeState::highGoal;
+  pros::delay(1700);
+  chassis.odom_theta_set(0_deg);
+  setMatchload(false);
+  chassis.pid_drive_set(2_in, DRIVE_SPEED, true);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_swing_set(ez::RIGHT_SWING, 180_deg, SWING_SPEED+40, 0, ez::ccw);
+  chassis.pid_wait_quick_chain();
+  wing.set_value(false);
+  chassis.pid_drive_set(26_in, DRIVE_SPEED-30, true);
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set(225_deg, TURN_SPEED);
+  pros::delay(500);
+  chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);
+}
+
 void awp()
 {
   chassis.odom_xyt_set(48_in, 11_in, 0_deg);

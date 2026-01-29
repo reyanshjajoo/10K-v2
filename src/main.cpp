@@ -203,12 +203,13 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
+    {"Right 6 Ball Rush", right_six_ball_rush},
       {"AWP", awp},
       {"Right 7 Ball Wing", right_wing},
       {"Left 3-4 Split", left_3_4},
       {"Kaihan Counter", kaihan_counter},
       {"Go Forward", go_forward},
-      {"Right 7 Ball Descore", right_7ball},
+      {"Right 7 Ball Push", right_7ball},
       {"Skills", skills},
 
   });

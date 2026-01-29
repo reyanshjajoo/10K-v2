@@ -5,6 +5,7 @@ void kaihan_counter();
 void awp();
 void go_forward();
 void drive_example();
+void right_six_ball_rush();
 void right_7ball();
 void right_wing();
 void left_7ball();
