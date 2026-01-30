@@ -387,12 +387,11 @@ void skills()
   int rightDistance = mm_to_in(dist_right.get());
   intakeState = IntakeState::intake;
   chassis.pid_drive_set(6_in, DRIVE_SPEED-30);
-  chassis.pid_wait_quick();
-   chassis.pid_drive_set(-3_in, DRIVE_SPEED-20);
-   chassis.pid_wait_quick();
-   chassis.pid_drive_set(6_in, DRIVE_SPEED);
-   chassis.pid_wait_quick();
   pros::delay(400);
+   chassis.pid_drive_set(-3_in, DRIVE_SPEED-20);
+  pros::delay(400);
+   chassis.pid_drive_set(6_in, DRIVE_SPEED);
+  pros::delay(600);
   chassis.pid_drive_set(-24_in, 127);
   chassis.pid_wait_quick();
   chassis.pid_drive_set(9_in, 30);
@@ -479,7 +478,7 @@ void skills()
   chassis.pid_wait_quick();
   chassis.drive_set(30, 30);
   pros::delay(1000);                             // matchlaod delay
-  chassis.pid_drive_set(-33_in, DRIVE_SPEED-20);
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED-20);//too much delay not 33
   chassis.pid_wait_quick();
   matchload.set_value(false);
   intakeState = IntakeState::highGoal;
