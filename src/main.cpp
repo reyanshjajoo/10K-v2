@@ -120,7 +120,7 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(127); // intake forward //TODO FOR SKILLS 95
+      intake.move(95); // intake forward //TODO FOR SKILLS 95
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -145,7 +145,7 @@ void shooter_task()
 
       break;
     case IntakeState::midGoalAuto:
-      intake.move(127); // intake forward TODO 110 Skills
+      intake.move(95); // intake forward TODO 110 Skills
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -203,14 +203,14 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
+      {"Skills", skills},
       {"Right 6 Ball Rush", right_six_ball_rush},
       {"AWP", awp},
       {"Right 7 Ball Wing", right_wing},
       {"Left 3-4 Split", left_3_4},
       {"Kaihan Counter", kaihan_counter},
       {"Go Forward", go_forward},
-      {"Right 7 Ball Push", right_7ball},
-      {"Skills", skills},
+      {"Right 7 Ball Push", right_7ball}
   });
 
   // Initialize chassis and auton selector
