@@ -17,7 +17,7 @@ void drive_mode_task()
 {
   while (true)
   {
-    if (master.get_digital_new_press(DIGITAL_RIGHT))
+    if (master.get_digital_new_press(DIGITAL_UP))
     {
       drive_arcade = !drive_arcade;
       // master.rumble(drive_arcade ? "." : "..");
@@ -120,7 +120,7 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(80); // intake forward //TODO FOR SKILLS 80
+      intake.move(85); // intake forward //TODO FOR SKILLS 80 //TODO FOR MATCH 127
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -252,11 +252,14 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
+      {"Left 3-4 Split", left_3_4},
       {"Skills", skills},
       {"AWP", awp},
+
       {"Right 6 Ball Rush", right_six_ball_rush},
       {"Right 7 Ball Wing", right_wing},
-      {"Left 3-4 Split", left_3_4},
+
+
       {"Kaihan Counter", kaihan_counter},
       {"Go Forward", go_forward},
       {"Right 7 Ball Push", right_7ball}
@@ -293,16 +296,16 @@ void opcontrol()
 
     bool l2Held = master.get_digital(DIGITAL_L2);
     
-    // !!! ONLY ENABLE FOR MATCH
-    // if (master.get_digital_new_press(DIGITAL_B))
-    // {
-    //   wingControlEnabled = true;
-    //   toggleMid = !toggleMid;
-    //   toggleHigh = toggleIntake = toggleReverse = false;
-    // }
+   // !!! ONLY ENABLE FOR MATCH
+    if (master.get_digital_new_press(DIGITAL_B))
+    {
+      wingControlEnabled = true;
+      toggleMid = !toggleMid;
+      toggleHigh = toggleIntake = toggleReverse = false;
+    }
 
     // !!! ONLY ENABLE FOR SKILLS
-    if (master.get_digital_new_press(DIGITAL_B) && !midGoalMacroRunning)
+    if (master.get_digital_new_press(DIGITAL_Y) && !midGoalMacroRunning)
   {
     toggleMid = toggleHigh = toggleIntake = toggleReverse = false;
     midGoalMacroRequest = true;
