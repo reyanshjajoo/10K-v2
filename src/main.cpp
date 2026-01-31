@@ -281,7 +281,6 @@ void initialize()
   master.set_text(0, 0, drive_arcade ? "Drive: Arcade" : "Drive: Tank");
 }
 
-
 void opcontrol()
 {
   while (true)
@@ -352,20 +351,20 @@ void opcontrol()
       matchloadDown = !matchloadDown;
       matchload.set_value(matchloadDown);
     }
-    
+
     if (!midGoalMacroRunning && !midGoalMacroRequest)
-{
-    if (toggleMid)
-      intakeState = IntakeState::midGoal;
-    else if (toggleHigh)
-      intakeState = IntakeState::highGoal;
-    else if (toggleIntake)
-      intakeState = IntakeState::intake;
-    else if (l2Held)
-      intakeState = IntakeState::reverse;
-    else
-      intakeState = IntakeState::idle;
-}
+    {
+      if (toggleMid)
+        intakeState = IntakeState::midGoal;
+      else if (toggleHigh)
+        intakeState = IntakeState::highGoal;
+      else if (toggleIntake)
+        intakeState = IntakeState::intake;
+      else if (l2Held)
+        intakeState = IntakeState::reverse;
+      else
+        intakeState = IntakeState::idle;
+    }
 
     pros::delay(ez::util::DELAY_TIME);
   }

@@ -158,14 +158,14 @@ chassis.odom_xyt_set(-48_in, 11_in, 0_deg);
 
 void left_3_4()
 {
-
+  chassis.pid_turn_exit_condition_set(20_ms, 3_deg, 100_ms, 7_deg, 500_ms, 500_ms);
+  chassis.pid_drive_exit_condition_set(20_ms, 1_in, 100_ms, 4_in, 400_ms, 500_ms);
   chassis.odom_xyt_set(-48_in, 11_in, 0_deg);
   wing.set_value(true);
   intakeState = IntakeState::intake;
   matchload.set_value(true);
   chassis.pid_drive_set(34_in, DRIVE_SPEED, true);
   pros::delay(1000);
-  chassis.pid_turn_exit_condition_set(20_ms, 3_deg, 100_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
   chassis.pid_wait_quick_chain();
   chassis.pid_turn_exit_condition_set(80_ms, 3_deg, 200_ms, 7_deg, 400_ms, 500_ms);
@@ -174,7 +174,7 @@ void left_3_4()
   chassis.drive_set(95,95);
   pros::delay(200); //140 old                           // matchlaod delay
   chassis.pid_drive_set(-33_in, DRIVE_SPEED); // back from matchload
-    pros::delay(900);
+  pros::delay(900);
   intakeState = IntakeState::highGoal;
   matchload.set_value(false);
   pros::delay(850);
