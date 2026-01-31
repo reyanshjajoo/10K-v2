@@ -120,7 +120,13 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(95); // intake forward //TODO FOR SKILLS 95
+      intake.move(80); // intake forward //TODO FOR SKILLS 80
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
+
+    case IntakeState::midGoalSkills:
+      intake.move(95);
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -145,7 +151,7 @@ void shooter_task()
 
       break;
     case IntakeState::midGoalAuto:
-      intake.move(95); // intake forward TODO 110 Skills
+      intake.move(75);
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -172,6 +178,48 @@ void competition_initialize()
   // . . .
 }
 
+bool midGoalMacroRunning = false;
+bool midGoalMacroRequest = false;
+bool toggleMid = false;
+bool toggleHigh = false;
+bool toggleIntake = true;
+bool toggleReverse = false;
+bool matchloadDown = false;
+bool wingControlEnabled = false;
+
+void mid_goal_macro_task()
+{
+  while (true)
+  {
+    if (midGoalMacroRequest && !midGoalMacroRunning)
+    {
+      midGoalMacroRunning = true;
+      midGoalMacroRequest = false;
+      wing.set_value(true);
+
+      intakeState = IntakeState::midGoalSkills;
+      pros::delay(700);
+
+      intake.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+      intakeState = IntakeState::idle;
+      pros::delay(200);
+
+      intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+      intakeState = IntakeState::midGoalAuto;
+      pros::delay(1700);
+
+      intakeState = IntakeState::midGoalSkills;
+      pros::delay(300);
+
+      midGoalMacroRunning = false;
+      toggleMid = true;
+      toggleHigh = toggleIntake = toggleReverse = false;
+    }
+
+    pros::delay(10);
+  }
+}
+
 void autonomous()
 {
   chassis.pid_targets_reset();               // Resets PID targets to 0
@@ -189,6 +237,7 @@ void initialize()
   pros::Task ezScreenTask(ez_screen_task);
   pros::Task driveModeTask(drive_mode_task);
   pros::Task shooterTask(shooter_task);
+  pros::Task midGoalMacroTask(mid_goal_macro_task);
 
   pros::delay(500);
   wing.set_value(false);
@@ -204,8 +253,8 @@ void initialize()
 
   ez::as::auton_selector.autons_add({
       {"Skills", skills},
-      {"Right 6 Ball Rush", right_six_ball_rush},
       {"AWP", awp},
+      {"Right 6 Ball Rush", right_six_ball_rush},
       {"Right 7 Ball Wing", right_wing},
       {"Left 3-4 Split", left_3_4},
       {"Kaihan Counter", kaihan_counter},
@@ -229,12 +278,6 @@ void initialize()
   master.set_text(0, 0, drive_arcade ? "Drive: Arcade" : "Drive: Tank");
 }
 
-bool toggleMid = false;
-bool toggleHigh = false;
-bool toggleIntake = true;
-bool toggleReverse = false;
-bool matchloadDown = false;
-bool wingControlEnabled = false;
 
 void opcontrol()
 {
@@ -249,13 +292,22 @@ void opcontrol()
       chassis.opcontrol_tank();
 
     bool l2Held = master.get_digital(DIGITAL_L2);
+    
+    // !!! ONLY ENABLE FOR MATCH
+    // if (master.get_digital_new_press(DIGITAL_B))
+    // {
+    //   wingControlEnabled = true;
+    //   toggleMid = !toggleMid;
+    //   toggleHigh = toggleIntake = toggleReverse = false;
+    // }
 
-    if (master.get_digital_new_press(DIGITAL_B))
-    {
-      wingControlEnabled = true;
-      toggleMid = !toggleMid;
-      toggleHigh = toggleIntake = toggleReverse = false;
-    }
+    // !!! ONLY ENABLE FOR SKILLS
+    if (master.get_digital_new_press(DIGITAL_B) && !midGoalMacroRunning)
+  {
+    toggleMid = toggleHigh = toggleIntake = toggleReverse = false;
+    midGoalMacroRequest = true;
+  }
+
 
     if (master.get_digital_new_press(DIGITAL_R2))
     {
@@ -297,7 +349,9 @@ void opcontrol()
       matchloadDown = !matchloadDown;
       matchload.set_value(matchloadDown);
     }
-
+    
+    if (!midGoalMacroRunning && !midGoalMacroRequest)
+{
     if (toggleMid)
       intakeState = IntakeState::midGoal;
     else if (toggleHigh)
@@ -308,6 +362,7 @@ void opcontrol()
       intakeState = IntakeState::reverse;
     else
       intakeState = IntakeState::idle;
+}
 
     pros::delay(ez::util::DELAY_TIME);
   }

@@ -18,6 +18,7 @@ enum class IntakeState {
     idle,
     midGoal,
     midGoalAuto,
+    midGoalSkills,
     highGoal,
     reverse,
     intake
