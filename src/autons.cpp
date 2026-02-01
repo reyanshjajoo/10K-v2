@@ -327,7 +327,7 @@ void awp()
   matchload.set_value(true);
   wing.set_value(true);
   chassis.pid_drive_set(33_in, DRIVE_SPEED , true);
-  pros::delay(1100);
+  pros::delay(1050);
   chassis.pid_turn_set(90_deg, TURN_SPEED + 10);
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(9.5_in, 60, true); // intake matchload
@@ -378,7 +378,7 @@ void awp()
   pros::delay(350); 
 
   chassis.pid_drive_set(18_in, 55, true); // matchload
-  pros::delay(1200);                           // matchlaod delay
+  pros::delay(1360);                           // matchlaod delay
   chassis.pid_drive_set(-37_in, DRIVE_SPEED); // back from matchload
   pros::delay(900);
   intakeState = IntakeState::highGoal;
