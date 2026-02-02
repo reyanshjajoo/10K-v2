@@ -347,7 +347,7 @@ void awp()
   intakeState = IntakeState::intake; // later to outtake balls
   chassis.pid_turn_set(180_deg, TURN_SPEED);
   pros::delay(400);
-  chassis.pid_drive_set(63.5_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(60_in, DRIVE_SPEED, true);
   chassis.pid_wait_until(40_in);
   matchload.set_value(true);
   chassis.pid_wait();
@@ -369,7 +369,7 @@ void awp()
   matchload.set_value(false);
   chassis.pid_turn_set(140, TURN_SPEED);
   
-  chassis.pid_drive_set(53_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(52_in, DRIVE_SPEED, true);
   matchload.set_value(true);
   pros::delay(1400);
   
@@ -377,7 +377,7 @@ void awp()
   intakeState = IntakeState::intake;
   pros::delay(350); 
 
-  chassis.pid_drive_set(18_in, 55, true); // matchload
+  chassis.pid_drive_set(19_in, 55, true); // matchload
   pros::delay(1360);                           // matchlaod delay
   chassis.pid_drive_set(-37_in, DRIVE_SPEED); // back from matchload
   pros::delay(900);
