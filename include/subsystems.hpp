@@ -20,9 +20,10 @@ enum class IntakeState {
     midGoalAuto,
     midGoalSkills,
     midGoalMax,
+    outtakeMid,
     highGoal,
     reverse,
-    intake
+    intake,
 };
 
 extern IntakeState intakeState;

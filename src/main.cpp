@@ -130,7 +130,7 @@ void shooter_task()
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
-    
+
     case IntakeState::midGoalMax:
       intake.move(127);
       midGoalPiston.set_value(true);
@@ -166,7 +166,7 @@ void shooter_task()
       intake.move(-65); // intake backward
       midGoalPiston.set_value(true);
       blockerPiston.set_value(false);
-      break;  
+      break;
     case IntakeState::idle:
     default:
       intake.move(0);
@@ -198,6 +198,8 @@ bool toggleIntake = true;
 bool toggleReverse = false;
 bool matchloadDown = false;
 bool wingControlEnabled = false;
+bool driveMacroRunning = false;
+bool driveMacroRequest = false;
 
 void mid_goal_macro_task()
 {
@@ -232,6 +234,29 @@ void mid_goal_macro_task()
   }
 }
 
+
+void drive_macro_task()
+{
+  while (true)
+  {
+    if (driveMacroRequest && !driveMacroRunning)
+    {
+      driveMacroRunning = true;
+      driveMacroRequest = false;
+
+      chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+      chassis.pid_turn_set(100_deg, 127);
+      pros::delay(500);
+      chassis.pid_drive_set(2_in, 90);
+      pros::delay(100);
+      chassis.pid_turn_set(-10_deg, 127);
+      pros::delay(500);
+    }
+    driveMacroRunning = false;
+    pros::delay(10);
+  }
+}
+
 void autonomous()
 {
   chassis.pid_targets_reset();               // Resets PID targets to 0
@@ -250,6 +275,7 @@ void initialize()
   pros::Task driveModeTask(drive_mode_task);
   pros::Task shooterTask(shooter_task);
   pros::Task midGoalMacroTask(mid_goal_macro_task);
+  pros::Task driveMacroTask(drive_macro_task);
 
   pros::delay(500);
   wing.set_value(false);
@@ -263,16 +289,14 @@ void initialize()
   // chassis.opcontrol_curve_buttons_left_set(pros::E_CONTRO LLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
-  ez::as::auton_selector.autons_add({
-    {"AWP", awp},
-    {"Left 3-4 Split", left_3_4},  
-    {"Right 6 Ball Rush", right_six_ball_rush},
-      {"Right 7 Ball Wing", right_wing},
-      //{"Kaihan Counter", kaihan_counter},
-      {"Go Forward", go_forward},
-      {"Right 7 Ball Push", right_7ball},
-      {"Skills", skills}
-  });
+  ez::as::auton_selector.autons_add({{"AWP", awp},
+                                     {"Left 3-4 Split", left_3_4},
+                                     {"Right 6 Ball Rush", right_six_ball_rush},
+                                     {"Right 7 Ball Wing", right_wing},
+                                     //{"Kaihan Counter", kaihan_counter},
+                                     {"Go Forward", go_forward},
+                                     {"Right 7 Ball Push", right_7ball},
+                                     {"Skills", skills}});
 
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -297,14 +321,17 @@ void opcontrol()
     ez_template_extras();
     chassis.drive_brake_set(MOTOR_BRAKE_COAST);
 
-    if (drive_arcade)
-      chassis.opcontrol_arcade_standard(ez::SPLIT);
-    else
-      chassis.opcontrol_tank();
+    if (!driveMacroRunning)
+    {
+      if (drive_arcade)
+        chassis.opcontrol_arcade_standard(ez::SPLIT);
+      else
+        chassis.opcontrol_tank();
+    }
 
     bool l2Held = master.get_digital(DIGITAL_L2);
-    
-   // !!! ONLY ENABLE FOR MATCH
+
+    // !!! ONLY ENABLE FOR MATCH
     if (master.get_digital_new_press(DIGITAL_B))
     {
       wingControlEnabled = true;
@@ -314,11 +341,15 @@ void opcontrol()
 
     // !!! ONLY ENABLE FOR SKILLS
     if (master.get_digital_new_press(DIGITAL_Y) && !midGoalMacroRunning)
-  {
-    toggleMid = toggleHigh = toggleIntake = toggleReverse = false;
-    midGoalMacroRequest = true;
-  }
+    {
+      toggleMid = toggleHigh = toggleIntake = toggleReverse = false;
+      midGoalMacroRequest = true;
+    }
 
+    if (master.get_digital_new_press(DIGITAL_RIGHT) && !driveMacroRunning)
+    {
+      driveMacroRequest = true;
+    }
 
     if (master.get_digital_new_press(DIGITAL_R2))
     {
