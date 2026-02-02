@@ -120,13 +120,25 @@ void shooter_task()
     {
 
     case IntakeState::midGoal:
-      intake.move(127); // intake forward //TODO FOR SKILLS 80 //TODO FOR MATCH 127
+      intake.move(80); // intake forward //TODO FOR SKILLS 80 //TODO FOR MATCH 127
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
 
     case IntakeState::midGoalSkills:
       intake.move(95);
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
+    
+    case IntakeState::midGoalMax:
+      intake.move(127);
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
+
+    case IntakeState::midGoalAuto:
+      intake.move(75);
       midGoalPiston.set_value(true);
       blockerPiston.set_value(true);
       break;
@@ -150,11 +162,7 @@ void shooter_task()
       blockerPiston.set_value(true);
 
       break;
-    case IntakeState::midGoalAuto:
-      intake.move(75);
-      midGoalPiston.set_value(true);
-      blockerPiston.set_value(true);
-      break;
+
     case IntakeState::idle:
     default:
       intake.move(0);
@@ -252,9 +260,10 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
+    {"Skills", skills},
+    {"Right 6 Ball Rush", right_six_ball_rush},
+    {"Left 3-4 Split", left_3_4},  
       {"AWP", awp},
-      {"Left 3-4 Split", left_3_4},  
-      {"Skills", skills},
 
       {"Right 7 Ball Wing", right_wing},
 
