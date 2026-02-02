@@ -441,8 +441,11 @@ void skills()
   intakeState = IntakeState::reverse;
   pros::delay(200);
 
+  intakeState = IntakeState::midGoalMax;
+  pros::delay(400);
+
   intakeState = IntakeState::midGoalAuto;
-  pros::delay(700);
+  pros::delay(600);
 
   intake.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   intakeState = IntakeState::idle;
@@ -450,10 +453,10 @@ void skills()
 
   intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   intakeState = IntakeState::midGoalAuto;
-  pros::delay(1800);
+  pros::delay(1200);
 
   intakeState = IntakeState::midGoalMax;
-  pros::delay(500);
+  pros::delay(800);
 
   intakeState = IntakeState::intake;
   pros::delay(200);
@@ -503,9 +506,10 @@ void skills()
   chassis.pid_wait();
   chassis.pid_drive_set(-10_in, DRIVE_SPEED);
   pros::delay(300);
-  intakeState = IntakeState::highGoal;
   chassis.drive_set(-127, -127);
-  pros::delay(1700);
+  pros::delay(200);
+  intakeState = IntakeState::highGoal;
+  pros::delay(1800);
   chassis.odom_xyt_set(29_in, 48_in, 90_deg);
   intakeState = IntakeState::intake;
   matchload.set_value(true);
@@ -546,7 +550,7 @@ void skills()
   chassis.pid_wait();
   chassis.pid_swing_set(ez::LEFT_SWING, 210_deg, SWING_SPEED, 15, ez::cw);
   chassis.pid_wait();
-  chassis.pid_drive_set(23_in, DRIVE_SPEED);
+  chassis.pid_drive_set(25_in, DRIVE_SPEED);
   chassis.pid_wait();
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
@@ -590,6 +594,7 @@ void skills()
   intakeState = IntakeState::highGoal;
   chassis.drive_set(-127, -127);
   pros::delay(2300);
+  chassis.odom_theta_set(-90_deg);
   intakeState = IntakeState::intake;
   matchload.set_value(true);
   chassis.pid_drive_set(33.7_in, 55);
@@ -608,10 +613,12 @@ void skills()
   chassis.pid_wait();
   chassis.pid_turn_set(0_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(46_in, DRIVE_SPEED);
+  chassis.pid_drive_set(47_in, DRIVE_SPEED);
   chassis.pid_wait();
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
   chassis.pid_wait();
+  chassis.pid_drive_set(20_in, DRIVE_SPEED-30);
+  pros::delay(500);
   chassis.drive_set(110, 110);
 
   // ? old below
