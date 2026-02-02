@@ -289,8 +289,9 @@ void initialize()
   // chassis.opcontrol_curve_buttons_left_set(pros::E_CONTRO LLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
-  ez::as::auton_selector.autons_add({{"AWP", awp},
-                                     {"Left 3-4 Split", left_3_4},
+  ez::as::auton_selector.autons_add({{"Left 3-4 Split", left_3_4},
+    {"AWP", awp},
+                                    
                                      {"Right 6 Ball Rush", right_six_ball_rush},
                                      {"Right 7 Ball Wing", right_wing},
                                      //{"Kaihan Counter", kaihan_counter},

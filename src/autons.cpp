@@ -211,8 +211,8 @@ void left_3_4()
   chassis.pid_turn_set(85_deg, TURN_SPEED);
   pros::delay(500);
   wing.set_value(false);
-  chassis.pid_drive_set(26_in, 127, true);
-  pros::delay(1000);
+  chassis.pid_drive_set(21_in, 127, true);
+  pros::delay(1200);
   /*
     chassis.pid_turn_set(120_deg, TURN_SPEED);
   chassis.pid_wait_quick();
