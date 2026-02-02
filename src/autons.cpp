@@ -408,7 +408,7 @@ void skills()
   pros::delay(1500);//cut 200 ms later 
   chassis.pid_drive_set(-24_in, 107);
   chassis.pid_wait();
-  chassis.pid_drive_set(10_in, 100);
+  chassis.pid_drive_set(10_in, 90);
   pros::delay(1000);
   
   int finalDistance = mm_to_in(dist_right.get());
@@ -441,7 +441,7 @@ void skills()
   matchload.set_value(true);
   pros::delay(200);
   intakeState = IntakeState::reverse;
-  pros::delay(100);
+  pros::delay(200);
 
   intakeState = IntakeState::midGoalAuto;
   pros::delay(700);
@@ -452,16 +452,17 @@ void skills()
 
   intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   intakeState = IntakeState::midGoalAuto;
-  pros::delay(1700);
+  pros::delay(1800);
 
   intakeState = IntakeState::midGoalMax;
-  pros::delay(300);
+  pros::delay(500);
 
+  intakeState = IntakeState::intake;
+  pros::delay(200);
   chassis.pid_drive_set(57_in, DRIVE_SPEED); // move to matchload
   wing.set_value(true);
   matchload.set_value(true);
   pros::delay(300);
-  intakeState = IntakeState::intake;
   chassis.pid_wait();
   chassis.pid_turn_set(270_deg, TURN_SPEED);
   chassis.pid_wait();
@@ -479,7 +480,7 @@ void skills()
   chassis.pid_drive_set(13_in, 55); // intake matchload
   chassis.pid_wait();
   chassis.drive_set(30, 30);
-  pros::delay(1000);                             // matchlaod delay
+  pros::delay(700);                             // matchlaod delay
   chassis.pid_drive_set(-10.5_in, DRIVE_SPEED); // back from matchload
   chassis.pid_wait();
   chassis.pid_turn_set({-30, 60}, rev, TURN_SPEED);
@@ -539,7 +540,7 @@ void skills()
   pros::delay(1000);
   matchload.set_value(false);
   chassis.drive_set(80, 80);
-  pros::delay(500);
+  pros::delay(650);
   chassis.pid_drive_set(-17_in, 40);
   chassis.pid_wait();
   matchload.set_value(false);
@@ -563,7 +564,7 @@ void skills()
   chassis.pid_drive_set(33_in, 55);
   chassis.pid_wait();
   chassis.drive_set(30, 30);
-  pros::delay(1400);                             // matchlaod delay
+  pros::delay(1100);                             // matchlaod delay
   chassis.pid_drive_set(-10_in, DRIVE_SPEED); // back from matchload
   chassis.pid_wait();
   chassis.pid_turn_set(50_deg, TURN_SPEED);
@@ -609,14 +610,11 @@ void skills()
   chassis.pid_wait();
   chassis.pid_turn_set(0_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(46_in, DRIVE_SPEED);
+  chassis.pid_drive_set(48_in, DRIVE_SPEED);
   chassis.pid_wait();
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
   chassis.pid_wait();
   chassis.drive_set(127, 127);
-  pros::delay(1000);
-  chassis.drive_set(0, 0);
-  intakeState = IntakeState::idle;
 
   // ? old below
   // pros::delay(600);
