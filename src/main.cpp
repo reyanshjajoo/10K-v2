@@ -162,7 +162,11 @@ void shooter_task()
       blockerPiston.set_value(true);
 
       break;
-
+    case IntakeState::outtakeMid:
+      intake.move(-65); // intake backward
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(false);
+      break;  
     case IntakeState::idle:
     default:
       intake.move(0);
@@ -267,7 +271,7 @@ void initialize()
       //{"Kaihan Counter", kaihan_counter},
       {"Go Forward", go_forward},
       {"Right 7 Ball Push", right_7ball},
-      {"Skills", skills},
+      {"Skills", skills}
   });
 
   // Initialize chassis and auton selector
