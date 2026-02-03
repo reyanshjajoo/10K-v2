@@ -113,134 +113,198 @@ void ez_template_extras()
 
 void shooter_task()
 {
-  static bool antiJamActive = false;
-  static uint32_t antiJamEnd = 0;
-
-  static bool wasHighGoal = false;
-  static uint32_t highGoalStart = 0;
-  static int lowRpmMs = 0;
-
   while (true)
   {
-    int intakeCmd = 0;
-    bool midPiston = false;
-    bool blocker = true;
-
     switch (intakeState)
     {
-      case IntakeState::highGoal:
-        intakeCmd = 127;
-        midPiston = false;
-        blocker = false;
-        break;
+    case IntakeState::midGoal:
+      intake.move(127); // intake forward //TODO FOR SKILLS 80 //TODO FOR MATCH 127
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
 
-      case IntakeState::midGoal:
-        intakeCmd = 80;
-        midPiston = true;
-        blocker = true;
-        break;
+    case IntakeState::midGoalSkills:
+      intake.move(95);
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
 
-      case IntakeState::midGoalSkills:
-        intakeCmd = 95;
-        midPiston = true;
-        blocker = true;
-        break;
+    case IntakeState::midGoalMax:
+      intake.move(127);
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
 
-      case IntakeState::midGoalMax:
-        intakeCmd = 127;
-        midPiston = true;
-        blocker = true;
-        break;
+    case IntakeState::midGoalAuto:
+      intake.move(75);
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(true);
+      break;
 
-      case IntakeState::midGoalAuto:
-        intakeCmd = 75;
-        midPiston = true;
-        blocker = true;
-        break;
+    case IntakeState::highGoal:
+      intake.move(127); // intake forward
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(false);
+      break;
 
-      case IntakeState::intake:
-        intakeCmd = 127;
-        midPiston = false;
-        blocker = true;
-        break;
+    case IntakeState::intake:
+      intake.move(127); // intake forward
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(true);
 
-      case IntakeState::reverse:
-        intakeCmd = -65;
-        midPiston = false;
-        blocker = true;
-        break;
+      break;
 
-      case IntakeState::outtakeMid:
-        intakeCmd = -65;
-        midPiston = true;
-        blocker = false;
-        break;
+    case IntakeState::reverse:
+      intake.move(-65); // intake backward
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(true);
 
-      case IntakeState::idle:
-      default:
-        intakeCmd = 0;
-        midPiston = false;
-        blocker = true;
-        break;
-    }
-
-    midGoalPiston.set_value(midPiston);
-    blockerPiston.set_value(blocker);
-
-    uint32_t now = pros::millis();
-    bool isHighGoal = (intakeState == IntakeState::highGoal);
-
-    // Entering high goal
-    if (isHighGoal && !wasHighGoal)
-    {
-      highGoalStart = now;
-      lowRpmMs = 0;
-    }
-
-    if (!isHighGoal)
-      lowRpmMs = 0;
-
-    // -------- High goal anti-jam --------
-    if (isHighGoal && !antiJamActive && (now - highGoalStart) > 500)
-    {
-      int rpm = std::abs(intake.get_actual_velocity());
-
-      if (rpm < 70) lowRpmMs += 10;
-      else lowRpmMs = 0;
-
-      if (lowRpmMs >= 200)
-      {
-        antiJamActive = true;
-        antiJamEnd = now + 150;
-        lowRpmMs = 0;
-      }
-    }
-    // -----------------------------------
-
-    wasHighGoal = isHighGoal;
-
-    if (antiJamActive)
-    {
-      intake.move(-80);
-
-      if (now >= antiJamEnd)
-      {
-        antiJamActive = false;
-
-        highGoalStart = now;
-        lowRpmMs = 0;
-      }
-    }
-    else
-    {
-      intake.move(intakeCmd);
+      break;
+    case IntakeState::outtakeMid:
+      intake.move(-65); // intake backward
+      midGoalPiston.set_value(true);
+      blockerPiston.set_value(false);
+      break;
+    case IntakeState::idle:
+    default:
+      intake.move(0);
+      midGoalPiston.set_value(false);
+      blockerPiston.set_value(true);
+      break;
     }
 
     pros::delay(10);
   }
 }
 
+// void shooter_task()
+// {
+//   static bool antiJamActive = false;
+//   static uint32_t antiJamEnd = 0;
 
+//   static bool wasHighGoal = false;
+//   static uint32_t highGoalStart = 0;
+//   static int lowRpmMs = 0;
+
+//   while (true)
+//   {
+//     int intakeCmd = 0;
+//     bool midPiston = false;
+//     bool blocker = true;
+
+//     switch (intakeState)
+//     {
+//       case IntakeState::highGoal:
+//         intakeCmd = 127;
+//         midPiston = false;
+//         blocker = false;
+//         break;
+
+//       case IntakeState::midGoal:
+//         intakeCmd = 80;
+//         midPiston = true;
+//         blocker = true;
+//         break;
+
+//       case IntakeState::midGoalSkills:
+//         intakeCmd = 95;
+//         midPiston = true;
+//         blocker = true;
+//         break;
+
+//       case IntakeState::midGoalMax:
+//         intakeCmd = 127;
+//         midPiston = true;
+//         blocker = true;
+//         break;
+
+//       case IntakeState::midGoalAuto:
+//         intakeCmd = 75;
+//         midPiston = true;
+//         blocker = true;
+//         break;
+
+//       case IntakeState::intake:
+//         intakeCmd = 127;
+//         midPiston = false;
+//         blocker = true;
+//         break;
+
+//       case IntakeState::reverse:
+//         intakeCmd = -65;
+//         midPiston = false;
+//         blocker = true;
+//         break;
+
+//       case IntakeState::outtakeMid:
+//         intakeCmd = -65;
+//         midPiston = true;
+//         blocker = false;
+//         break;
+
+//       case IntakeState::idle:
+//       default:
+//         intakeCmd = 0;
+//         midPiston = false;
+//         blocker = true;
+//         break;
+//     }
+
+//     midGoalPiston.set_value(midPiston);
+//     blockerPiston.set_value(blocker);
+
+//     uint32_t now = pros::millis();
+//     bool isHighGoal = (intakeState == IntakeState::highGoal);
+
+//     // Entering high goal
+//     if (isHighGoal && !wasHighGoal)
+//     {
+//       highGoalStart = now;
+//       lowRpmMs = 0;
+//     }
+
+//     if (!isHighGoal)
+//       lowRpmMs = 0;
+
+//     // -------- High goal anti-jam --------
+//     if (isHighGoal && !antiJamActive && (now - highGoalStart) > 500)
+//     {
+//       int rpm = std::abs(intake.get_actual_velocity());
+
+//       if (rpm < 70) lowRpmMs += 10;
+//       else lowRpmMs = 0;
+
+//       if (lowRpmMs >= 200)
+//       {
+//         antiJamActive = true;
+//         antiJamEnd = now + 150;
+//         lowRpmMs = 0;
+//       }
+//     }
+//     // -----------------------------------
+
+//     wasHighGoal = isHighGoal;
+
+//     if (antiJamActive)
+//     {
+//       intake.move(-80);
+
+//       if (now >= antiJamEnd)
+//       {
+//         antiJamActive = false;
+
+//         highGoalStart = now;
+//         lowRpmMs = 0;
+//       }
+//     }
+//     else
+//     {
+//       intake.move(intakeCmd);
+//     }
+
+//     pros::delay(10);
+//   }
+// }
 
 void disabled()
 {
@@ -351,15 +415,16 @@ void initialize()
   // chassis.opcontrol_curve_buttons_left_set(pros::E_CONTRO LLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
-  ez::as::auton_selector.autons_add({{"Skills", skills},
-    {"AWP", awp},
-                                     {"Left 3-4 Split", left_3_4},
-                                     {"Right 5 Ball Rush", right_5ball_rush},
-                                     {"Right 7 Ball Wing", right_wing},
-                                     //{"Kaihan Counter", kaihan_counter},
-                                     {"Go Forward", go_forward},
-                                     {"Right 7 Ball Push", right_7ball},
-                                     });
+  ez::as::auton_selector.autons_add({
+      {"AWP", awp},
+      {"Left 3-4 Split", left_3_4},
+      {"Right 5 Ball Rush", right_5ball_rush},
+      {"Right 7 Ball Wing", right_wing},
+      //{"Kaihan Counter", kaihan_counter},
+      {"Go Forward", go_forward},
+      {"Right 7 Ball Push", right_7ball},
+      {"Skills", skills},
+  });
 
   // Initialize chassis and auton selector
   chassis.initialize();
