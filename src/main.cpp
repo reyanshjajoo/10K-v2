@@ -113,71 +113,125 @@ void ez_template_extras()
 
 void shooter_task()
 {
+  static bool antiJamActive = false;
+  static uint32_t antiJamEnd = 0;
+
+  static bool wasHighGoal = false;
+  static uint32_t highGoalStart = 0;
+  static int lowRpmMs = 0;
+
   while (true)
   {
+    int intakeCmd = 0;
+    bool midPiston = false;
+    bool blocker = true;
 
     switch (intakeState)
     {
+      case IntakeState::highGoal:
+        intakeCmd = 127;
+        midPiston = false;
+        blocker = false;
+        break;
 
-    case IntakeState::midGoal:
-      intake.move(80); // intake forward //TODO FOR SKILLS 80 //TODO FOR MATCH 127
-      midGoalPiston.set_value(true);
-      blockerPiston.set_value(true);
-      break;
+      case IntakeState::midGoal:
+        intakeCmd = 80;
+        midPiston = true;
+        blocker = true;
+        break;
 
-    case IntakeState::midGoalSkills:
-      intake.move(95);
-      midGoalPiston.set_value(true);
-      blockerPiston.set_value(true);
-      break;
+      case IntakeState::midGoalSkills:
+        intakeCmd = 95;
+        midPiston = true;
+        blocker = true;
+        break;
 
-    case IntakeState::midGoalMax:
-      intake.move(127);
-      midGoalPiston.set_value(true);
-      blockerPiston.set_value(true);
-      break;
+      case IntakeState::midGoalMax:
+        intakeCmd = 127;
+        midPiston = true;
+        blocker = true;
+        break;
 
-    case IntakeState::midGoalAuto:
-      intake.move(75);
-      midGoalPiston.set_value(true);
-      blockerPiston.set_value(true);
-      break;
+      case IntakeState::midGoalAuto:
+        intakeCmd = 75;
+        midPiston = true;
+        blocker = true;
+        break;
 
-    case IntakeState::highGoal:
-      intake.move(127); // intake forward
-      midGoalPiston.set_value(false);
-      blockerPiston.set_value(false);
-      break;
+      case IntakeState::intake:
+        intakeCmd = 127;
+        midPiston = false;
+        blocker = true;
+        break;
 
-    case IntakeState::intake:
-      intake.move(127); // intake forward
-      midGoalPiston.set_value(false);
-      blockerPiston.set_value(true);
+      case IntakeState::reverse:
+        intakeCmd = -65;
+        midPiston = false;
+        blocker = true;
+        break;
 
-      break;
+      case IntakeState::outtakeMid:
+        intakeCmd = -65;
+        midPiston = true;
+        blocker = false;
+        break;
 
-    case IntakeState::reverse:
-      intake.move(-65); // intake backward
-      midGoalPiston.set_value(false);
-      blockerPiston.set_value(true);
+      case IntakeState::idle:
+      default:
+        intakeCmd = 0;
+        midPiston = false;
+        blocker = true;
+        break;
+    }
 
-      break;
-    case IntakeState::outtakeMid:
-      intake.move(-65); // intake backward
-      midGoalPiston.set_value(true);
-      blockerPiston.set_value(false);
-      break;
-    case IntakeState::idle:
-    default:
-      intake.move(0);
-      midGoalPiston.set_value(false);
-      blockerPiston.set_value(true);
-      break;
+    midGoalPiston.set_value(midPiston);
+    blockerPiston.set_value(blocker);
+
+    bool isHighGoal = (intakeState == IntakeState::highGoal);
+    uint32_t now = pros::millis();
+
+    if (isHighGoal && !wasHighGoal)
+    {
+      highGoalStart = now;
+      lowRpmMs = 0;
+    }
+    if (!isHighGoal)
+    {
+      lowRpmMs = 0;
+    }
+
+    // Only start checking after grace period
+    if (isHighGoal && !antiJamActive && (now - highGoalStart) > 10)
+    {
+      int rpm = std::abs(intake.get_actual_velocity());
+
+      if (rpm < 200) lowRpmMs += 10;
+      else lowRpmMs = 0;
+
+      if (lowRpmMs >= 120)
+      {
+        antiJamActive = true;
+        antiJamEnd = now + 500;
+        lowRpmMs = 0;
+      }
+    }
+
+    wasHighGoal = isHighGoal;
+
+    if (antiJamActive)
+    {
+      intake.move(-80);
+      if (now >= antiJamEnd) antiJamActive = false;
+    }
+    else
+    {
+      intake.move(intakeCmd);
     }
 
     pros::delay(10);
   }
 }
+
 
 void disabled()
 {
