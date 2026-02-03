@@ -187,41 +187,49 @@ void shooter_task()
     midGoalPiston.set_value(midPiston);
     blockerPiston.set_value(blocker);
 
-    bool isHighGoal = (intakeState == IntakeState::highGoal);
     uint32_t now = pros::millis();
+    bool isHighGoal = (intakeState == IntakeState::highGoal);
 
+    // Entering high goal
     if (isHighGoal && !wasHighGoal)
     {
       highGoalStart = now;
       lowRpmMs = 0;
     }
-    if (!isHighGoal)
-    {
-      lowRpmMs = 0;
-    }
 
-    // Only start checking after grace period
-    if (isHighGoal && !antiJamActive && (now - highGoalStart) > 10)
+    if (!isHighGoal)
+      lowRpmMs = 0;
+
+    // -------- High goal anti-jam --------
+    if (isHighGoal && !antiJamActive && (now - highGoalStart) > 500)
     {
       int rpm = std::abs(intake.get_actual_velocity());
 
-      if (rpm < 200) lowRpmMs += 10;
+      if (rpm < 70) lowRpmMs += 10;
       else lowRpmMs = 0;
 
-      if (lowRpmMs >= 120)
+      if (lowRpmMs >= 200)
       {
         antiJamActive = true;
-        antiJamEnd = now + 500;
+        antiJamEnd = now + 150;
         lowRpmMs = 0;
       }
     }
+    // -----------------------------------
 
     wasHighGoal = isHighGoal;
 
     if (antiJamActive)
     {
       intake.move(-80);
-      if (now >= antiJamEnd) antiJamActive = false;
+
+      if (now >= antiJamEnd)
+      {
+        antiJamActive = false;
+
+        highGoalStart = now;
+        lowRpmMs = 0;
+      }
     }
     else
     {
@@ -231,6 +239,7 @@ void shooter_task()
     pros::delay(10);
   }
 }
+
 
 
 void disabled()
