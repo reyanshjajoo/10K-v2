@@ -304,7 +304,7 @@ void right_5ball_rush()
   chassis.drive_set(-127, -127);
   pros::delay(1000);
   intakeState = IntakeState::highGoal;
-  pros::delay(1700);
+  pros::delay(1500);
   chassis.odom_theta_set(0_deg);
   setMatchload(false);
   chassis.pid_drive_set(2_in, DRIVE_SPEED, true);
@@ -485,7 +485,7 @@ void skills()
   chassis.pid_drive_set(13_in, 55); // intake matchload
   chassis.pid_wait();
   chassis.drive_set(30, 30);
-  pros::delay(700);                             // matchlaod delay
+  pros::delay(400);                             // matchlaod delay
   chassis.pid_drive_set(-10.5_in, DRIVE_SPEED); // back from matchload
   chassis.pid_wait();
   chassis.pid_turn_set({-30, 60}, rev, TURN_SPEED);
