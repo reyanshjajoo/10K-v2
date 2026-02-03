@@ -281,7 +281,7 @@ void right_wing()
 
 
 
-void right_six_ball_rush()
+void right_5ball_rush()
 {
   wing.set_value(true);
   chassis.odom_xyt_set(48_in, 11_in, 270_deg);
@@ -406,7 +406,7 @@ void skills()
   pros::delay(1500);//cut 200 ms later 
   chassis.pid_drive_set(-24_in, 107);
   chassis.pid_wait();
-  chassis.pid_drive_set(10_in, 90);
+  chassis.pid_drive_set(10_in, 85);
   pros::delay(1000);
   
   int finalDistance = mm_to_in(dist_right.get());
@@ -434,18 +434,17 @@ void skills()
   pros::delay(50);
   chassis.pid_turn_set(-45_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.drive_set(-30, -30);
+  chassis.drive_set(-20, -20);
   wing.set_value(true);
   matchload.set_value(true);
-  pros::delay(200);
+  pros::delay(230);
   intakeState = IntakeState::reverse;
   pros::delay(200);
 
-  intakeState = IntakeState::midGoalMax;
-  pros::delay(400);
+  wing.set_value(true);
 
-  intakeState = IntakeState::midGoalAuto;
-  pros::delay(600);
+  intakeState = IntakeState::midGoalSkills;
+  pros::delay(700);
 
   intake.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   intakeState = IntakeState::idle;
@@ -453,14 +452,19 @@ void skills()
 
   intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   intakeState = IntakeState::midGoalAuto;
-  pros::delay(1200);
+  pros::delay(1700);
 
-  intakeState = IntakeState::midGoalMax;
-  pros::delay(800);
-
+  intakeState = IntakeState::midGoalSkills;
+  pros::delay(300);
+  
   intakeState = IntakeState::intake;
-  pros::delay(200);
+  
+  pros::delay(520);
   chassis.pid_drive_set(57_in, DRIVE_SPEED); // move to matchload
+  pros::delay(200);
+  intakeState = IntakeState::midGoal;
+  pros::delay(200);
+  intakeState = IntakeState::intake;
   wing.set_value(true);
   matchload.set_value(true);
   pros::delay(300);
