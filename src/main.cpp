@@ -416,6 +416,9 @@ void initialize()
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   ez::as::auton_selector.autons_add({
+      {"Left 7", left7},
+      {"Left 4", left4},
+      {"New Left 3-4 Split", left_3_4_new},
       {"AWP", awp},
       {"Left 3-4 Split", left_3_4},
       {"Right 5 Ball Rush", right_5ball_rush},
