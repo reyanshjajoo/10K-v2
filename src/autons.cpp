@@ -311,7 +311,7 @@ void left4()
   chassis.pid_turn_set({-23, 20}, fwd, 127);
   pros::delay(200);
   intakeState = IntakeState::intake;
-  chassis.pid_drive_set(22_in, 127);
+  chassis.pid_drive_set(21_in, 127);
   chassis.pid_wait_until(14_in);
   matchload.set_value(true);
   chassis.pid_wait();
@@ -506,14 +506,14 @@ void awp()
   pros::delay(130);
   chassis.pid_turn_set(180_deg, TURN_SPEED);
   pros::delay(400);
-  chassis.pid_drive_set(59.5_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(58.5_in, DRIVE_SPEED, true);
   chassis.pid_wait_until(40_in);
   matchload.set_value(true);
   chassis.pid_wait();
   chassis.pid_turn_set(135, TURN_SPEED); // mid goal
   intakeState = IntakeState::idle;
   pros::delay(350);
-  chassis.pid_drive_set(-25_in, DRIVE_SPEED-10, true);
+  chassis.pid_drive_set(-21_in, DRIVE_SPEED-25, true);
   pros::delay(700); // tuen
   chassis.pid_turn_set(139_deg, TURN_SPEED);
   pros::delay(100);
