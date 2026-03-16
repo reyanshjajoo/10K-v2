@@ -537,12 +537,7 @@ void awp()
   chassis.pid_drive_set(-37_in, DRIVE_SPEED); // back from matchload
   pros::delay(900);
   intakeState = IntakeState::highGoal;
-  matchload.set_value(false);
-  
-
-  
-  
-  
+  matchload.set_value(false);  
 }
 
 void skills()
